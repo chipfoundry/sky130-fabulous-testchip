@@ -1,0 +1,253 @@
+meta:
+  version: 3
+  flow: Chip
+  substituting_steps:
+
+    # Magic reports some overlaps which can be ignored
+    Checker.IllegalOverlap: null
+
+    # Disable KLayout DRC
+    #KLayout.DRC: null
+    #Checker.KLayoutDRC: null
+
+    # Disable magic DRC
+    Magic.DRC: null
+    Checker.MagicDRC: null
+
+    # Disable KLayout antenna check
+    #KLayout.Antenna: null
+    #Checker.KLayoutAntenna: null
+
+    # Disable KLayout density check
+    #KLayout.Density: null
+    #Checker.KLayoutDensity: null
+    
+    # Save time
+    #OpenROAD.IRDropReport: null
+    #KLayout.XOR: null
+    #Netgen.LVS: null
+    #Checker.LVS: null
+    
+    # Disable chip finishing
+    KLayout.Antenna: null
+    Checker.KLayoutAntenna: null
+    KLayout.SealRing: null
+    KLayout.Filler: null
+    KLayout.Density: null
+    Checker.KLayoutDensity: null
+    
+    # TODO
+    Checker.DisconnectedPins: null
+
+DESIGN_NAME: chip_top
+VERILOG_FILES:
+- dir::../src/chip_top.sv
+- dir::../src/chip_core.sv
+- dir::../ip/fabric_bitbang/fabric_bitbang.sv
+- dir::../ip/fabric_config/fabric_config.sv
+
+# Enable plugin for better SystemVerilog support
+# USE_SLANG: True
+
+# Slightly smaller file sizes
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+PAD_CFG: dir::pad_cfg.tcl
+
+# Specify the pad instances for the padring
+PAD_SOUTH: [
+    # 11 pads
+
+    "vddio_pads\\[0\\].vddio_pad",
+    "vssio_pads\\[0\\].vssio_pad",
+
+    clock_pad,
+    reset_pad,
+
+    "bidirs\\[0\\].bidir_pad",
+    "bidirs\\[1\\].bidir_pad",
+    "bidirs\\[2\\].bidir_pad",
+    "bidirs\\[3\\].bidir_pad",
+    "bidirs\\[4\\].bidir_pad",
+
+    "vddio_pads\\[1\\].vddio_pad",
+    "vssio_pads\\[1\\].vssio_pad"
+]
+
+PAD_EAST: [
+    # 20 pads
+    "vccd_pads\\[0\\].vccd_pad",
+    "vssd_pads\\[0\\].vssd_pad",
+
+    "bidirs\\[5\\].bidir_pad",
+    "bidirs\\[6\\].bidir_pad",
+    "bidirs\\[7\\].bidir_pad",
+    "bidirs\\[8\\].bidir_pad",
+    "bidirs\\[9\\].bidir_pad",
+    "bidirs\\[10\\].bidir_pad",
+    "bidirs\\[11\\].bidir_pad",
+    "bidirs\\[12\\].bidir_pad",
+    "bidirs\\[13\\].bidir_pad",
+    "bidirs\\[14\\].bidir_pad",
+    "bidirs\\[15\\].bidir_pad",
+    "bidirs\\[16\\].bidir_pad",
+    "bidirs\\[17\\].bidir_pad",
+    "bidirs\\[18\\].bidir_pad",
+    "bidirs\\[19\\].bidir_pad",
+    "bidirs\\[20\\].bidir_pad",
+    
+    "vccd_pads\\[1\\].vccd_pad",
+    "vssd_pads\\[1\\].vssd_pad"
+]
+
+PAD_NORTH: [
+    # 11 pads
+    "vddio_pads\\[3\\].vddio_pad",
+    "vssio_pads\\[3\\].vssio_pad",
+
+    "bidirs\\[27\\].bidir_pad",
+    "bidirs\\[26\\].bidir_pad",
+    "bidirs\\[25\\].bidir_pad",
+    "bidirs\\[24\\].bidir_pad",
+    "bidirs\\[23\\].bidir_pad",
+    "bidirs\\[22\\].bidir_pad",
+    "bidirs\\[21\\].bidir_pad",
+
+    "vddio_pads\\[2\\].vddio_pad",
+    "vssio_pads\\[2\\].vssio_pad"
+]
+
+PAD_WEST: [
+    # 21 pads
+    "vccd_pads\\[3\\].vccd_pad",
+    "vssd_pads\\[3\\].vssd_pad",
+
+    "bidirs\\[44\\].bidir_pad",
+    "bidirs\\[43\\].bidir_pad",
+    "bidirs\\[42\\].bidir_pad",
+    "bidirs\\[41\\].bidir_pad",
+    "bidirs\\[40\\].bidir_pad",
+    "bidirs\\[39\\].bidir_pad",
+    "bidirs\\[38\\].bidir_pad",
+    "bidirs\\[37\\].bidir_pad",
+    "bidirs\\[36\\].bidir_pad",
+    "bidirs\\[35\\].bidir_pad",
+    "bidirs\\[34\\].bidir_pad",
+    "bidirs\\[33\\].bidir_pad",
+    "bidirs\\[32\\].bidir_pad",
+    "bidirs\\[31\\].bidir_pad",
+    "bidirs\\[30\\].bidir_pad",
+    "bidirs\\[29\\].bidir_pad",
+    "bidirs\\[28\\].bidir_pad",
+        
+    "vccd_pads\\[2\\].vccd_pad",
+    "vssd_pads\\[2\\].vssd_pad"
+]
+
+# SDC files
+PNR_SDC_FILE: dir::chip_top.sdc
+SIGNOFF_SDC_FILE: dir::chip_top.sdc
+FALLBACK_SDC: dir::chip_top.sdc
+
+# Power / ground nets
+VDD_NETS:
+- VCCD
+GND_NETS:
+- VSSD
+
+# Clock
+CLOCK_PORT: clk_PAD
+CLOCK_NET: clock_pad/IN
+
+CLOCK_PERIOD: 20
+
+# Floorplanning
+FP_SIZING: absolute
+# 3880umx5070um including 26um
+# for the sealring on all sides
+#DIE_AREA: [0, 0, 1600, 1600]
+#CORE_AREA: [400, 400, 1200, 1200]
+
+# Die area without sealring
+DIE_AREA: [0, 0, "expr::(3600 - 12)", "expr::(5200 - 12)"]
+CORE_AREA: [250, 250, "expr::$DIE_AREA[2] - 250", "expr::$DIE_AREA[3] - 250"]
+
+# TODO: just for testing
+#FP_OBSTRUCTIONS:
+#- [300, 300, "expr::$DIE_AREA[2] - 300", "expr::$DIE_AREA[3] - 300"]
+
+# Increase for more logic
+# on your die
+PL_TARGET_DENSITY_PCT: 10
+GRT_ALLOW_CONGESTION: true
+
+# PDN
+PDN_CORE_RING: True
+
+IGNORE_DISCONNECTED_MODULES:
+- sky130_fd_io__top_power_hvc_wpad
+- sky130_fd_io__top_ground_hvc_wpad
+- sky130_fd_io__top_power_lvc_wpad
+- sky130_fd_io__top_ground_lvc_wpad
+
+# Maximum metal width without slotting: 30um
+PDN_CORE_RING_VWIDTH: 15
+PDN_CORE_RING_HWIDTH: 15
+# Ensure minimum spacing for long metals
+PDN_CORE_RING_VSPACING: 5
+PDN_CORE_RING_HSPACING: 5
+
+PDN_CORE_VERTICAL_LAYER: met2
+PDN_CORE_HORIZONTAL_LAYER: met3
+
+PDN_CORE_RING_CONNECT_TO_PADS: True
+PDN_CORE_RING_CONNECT_TO_PAD_LAYERS: [met3]
+PDN_ENABLE_PINS: False # xxx does not contain any terminals
+
+MACROS:
+  classic_fabric_chipfoundry_small:
+    gds:
+      - dir::../fabrics/classic_fabric_chipfoundry_small/macro/sky130A/gds/classic_fabric_chipfoundry_small.gds
+    lef:
+      - dir::../fabrics/classic_fabric_chipfoundry_small/macro/sky130A/lef/classic_fabric_chipfoundry_small.lef
+    nl:
+      - dir::../fabrics/classic_fabric_chipfoundry_small/macro/sky130A/nl/classic_fabric_chipfoundry_small.nl.v
+    instances:
+      i_chip_core.i_classic_fabric_chipfoundry_small:
+        location: [350, expr::(3600 - (260 + 50))]
+        orientation: N
+
+  classic_fabric_chipfoundry_medium:
+    gds:
+      - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/gds/classic_fabric_chipfoundry_medium.gds
+    lef:
+      - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/lef/classic_fabric_chipfoundry_medium.lef
+    nl:
+      - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/nl/classic_fabric_chipfoundry_medium.nl.v
+    instances:
+      i_chip_core.i_classic_fabric_chipfoundry_medium:
+        location: [expr::(2000 - 610), expr::(3600 - (260 + 50))]
+        orientation: N
+
+  classic_fabric_chipfoundry_large:
+    gds:
+      - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/gds/classic_fabric_chipfoundry_large.gds
+    lef:
+      - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/lef/classic_fabric_chipfoundry_large.lef
+    nl:
+      - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/nl/classic_fabric_chipfoundry_large.nl.v
+    instances:
+      i_chip_core.i_classic_fabric_chipfoundry_large:
+        location: [350, expr::(410 - 50)]
+        orientation: N
+
+# Because we have multiple power pads for one power domain
+MAGIC_EXT_UNIQUE: notopports
+
+# Render the image
+KLAYOUT_RENDER_RESOLUTION: 1024
+KLAYOUT_RENDER_OVERSAMPLING: 3
+KLAYOUT_PROPERTIES: dir::sky130_render.lyp
+
+PL_RESIZER_HOLD_SLACK_MARGIN: expr::(0.1 * 2)
+GRT_RESIZER_HOLD_SLACK_MARGIN: expr::(0.05 * 2)
