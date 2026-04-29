@@ -172,13 +172,40 @@ FP_SIZING: absolute
 DIE_AREA: [0, 0, "expr::(3600 - 12)", "expr::(5200 - 12)"]
 CORE_AREA: [250, 250, "expr::$DIE_AREA[2] - 250", "expr::$DIE_AREA[3] - 250"]
 
+# Prevent routing close to the padring
+ROUTING_OBSTRUCTIONS:
+# Left
+- [met1, 0, 0, 200, "expr::$DIE_AREA[3]"]
+- [met2, 0, 0, 200, "expr::$DIE_AREA[3]"]
+- [met3, 0, 0, 200, "expr::$DIE_AREA[3]"]
+- [met4, 0, 0, 200, "expr::$DIE_AREA[3]"]
+- [met5, 0, 0, 200, "expr::$DIE_AREA[3]"]
+# Right
+- [met1, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+# Bottom
+- [met1, 0, 0, "expr::$DIE_AREA[2]", 200]
+- [met2, 0, 0, "expr::$DIE_AREA[2]", 200]
+- [met3, 0, 0, "expr::$DIE_AREA[2]", 200]
+- [met4, 0, 0, "expr::$DIE_AREA[2]", 200]
+- [met5, 0, 0, "expr::$DIE_AREA[2]", 200]
+# Top
+- [met1, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+
 # TODO: just for testing
 #FP_OBSTRUCTIONS:
 #- [300, 300, "expr::$DIE_AREA[2] - 300", "expr::$DIE_AREA[3] - 300"]
 
 # Increase for more logic
 # on your die
-PL_TARGET_DENSITY_PCT: 10
+PL_TARGET_DENSITY_PCT: 20
 GRT_ALLOW_CONGESTION: true
 
 # PDN
@@ -213,8 +240,11 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_small/macro/sky130A/nl/classic_fabric_chipfoundry_small.nl.v
     instances:
+    # x should be multiple of 0.46 (Metal2 pitch)
+    # y should be multiple of 0.68 (Metal3 pitch)
+    # Standard cell row height: 2.72 (4 Metal3 tracks)
       i_chip_core.i_classic_fabric_chipfoundry_small:
-        location: [350, expr::(3600 - (260 + 50))]
+        location: [349.6, 3289.84]
         orientation: N
 
   classic_fabric_chipfoundry_medium:
@@ -226,7 +256,7 @@ MACROS:
       - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/nl/classic_fabric_chipfoundry_medium.nl.v
     instances:
       i_chip_core.i_classic_fabric_chipfoundry_medium:
-        location: [expr::(2000 - 610), expr::(3600 - (260 + 50))]
+        location: [1389.66, 3289.84]
         orientation: N
 
   classic_fabric_chipfoundry_large:
@@ -238,7 +268,7 @@ MACROS:
       - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/nl/classic_fabric_chipfoundry_large.nl.v
     instances:
       i_chip_core.i_classic_fabric_chipfoundry_large:
-        location: [350, expr::(410 - 50)]
+        location: [349.6, 359.04]
         orientation: N
 
 # Because we have multiple power pads for one power domain
