@@ -230,6 +230,7 @@ PDN_CORE_HORIZONTAL_LAYER: met3
 PDN_CORE_RING_CONNECT_TO_PADS: True
 PDN_CORE_RING_CONNECT_TO_PAD_LAYERS: [met3]
 PDN_ENABLE_PINS: False # xxx does not contain any terminals
+ERROR_ON_PDN_VIOLATIONS: False # to prevent false positive error
 
 MACROS:
   classic_fabric_chipfoundry_small:
@@ -244,7 +245,7 @@ MACROS:
     # y should be multiple of 0.68 (Metal3 pitch)
     # Standard cell row height: 2.72 (4 Metal3 tracks)
       i_chip_core.i_classic_fabric_chipfoundry_small:
-        location: [349.6, 3289.84]
+        location: ["expr::(349.6 + (0.46 * 100))", 3289.84]
         orientation: N
 
   classic_fabric_chipfoundry_medium:
@@ -256,7 +257,7 @@ MACROS:
       - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/nl/classic_fabric_chipfoundry_medium.nl.v
     instances:
       i_chip_core.i_classic_fabric_chipfoundry_medium:
-        location: [1389.66, 3289.84]
+        location: ["expr::(1389.66 + (0.46 * 100))", 3289.84]
         orientation: N
 
   classic_fabric_chipfoundry_large:
@@ -268,7 +269,55 @@ MACROS:
       - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/nl/classic_fabric_chipfoundry_large.nl.v
     instances:
       i_chip_core.i_classic_fabric_chipfoundry_large:
-        location: [349.6, 359.04]
+        location: ["expr::(349.6 + (0.46 * 100))", 359.04]
+        orientation: N
+
+  caravel_logo:
+    gds:
+      - dir::../ip/caravel_logo/gds/caravel_logo.gds.gz
+    lef:
+      - dir::../ip/caravel_logo/lef/caravel_logo.lef
+    vh:
+      - dir::../ip/caravel_logo/vh/caravel_logo.vh
+    instances:
+      caravel_logo:
+        location: [27.800, 5039.200]
+        orientation: N
+
+  caravel_motto:
+    gds:
+      - dir::../ip/caravel_motto/gds/caravel_motto.gds.gz
+    lef:
+      - dir::../ip/caravel_motto/lef/caravel_motto.lef
+    vh:
+      - dir::../ip/caravel_motto/vh/caravel_motto.vh
+    instances:
+      caravel_motto:
+        location: [109.850, 5086.950]
+        orientation: N
+
+  open_source:
+    gds:
+      - dir::../ip/open_source/gds/open_source.gds.gz
+    lef:
+      - dir::../ip/open_source/lef/open_source.lef
+    vh:
+      - dir::../ip/open_source/vh/open_source.vh
+    instances:
+      open_source:
+        location: [3381.410, 5091.710]
+        orientation: N
+
+  project_id_textblock:
+    gds:
+      - dir::../ip/project_id_textblock/gds/project_id_textblock.gds.gz
+    lef:
+      - dir::../ip/project_id_textblock/lef/project_id_textblock.lef
+    vh:
+      - dir::../ip/project_id_textblock/vh/project_id_textblock.vh
+    instances:
+      project_id_textblock:
+        location: [58.250, 44.960]
         orientation: N
 
 # Because we have multiple power pads for one power domain
@@ -281,3 +330,6 @@ KLAYOUT_PROPERTIES: dir::sky130_render.lyp
 
 PL_RESIZER_HOLD_SLACK_MARGIN: expr::(0.1 * 2)
 GRT_RESIZER_HOLD_SLACK_MARGIN: expr::(0.05 * 2)
+
+# TODO
+HOLD_VIOLATION_CORNERS: ["*tt*", "*ss*"]

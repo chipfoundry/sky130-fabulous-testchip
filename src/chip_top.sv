@@ -31,8 +31,8 @@ module chip_top #(
     wire VCCD;
     wire VSSD;
     
-    wire VSWITCH;
-    wire VCCHIB;
+    //wire VSWITCH;
+    //wire VCCHIB;
     wire VDDA;
     wire VSSA;
     
@@ -318,6 +318,13 @@ module chip_top #(
         .bidir_out  (bidir_CORE2PAD),
         .bidir_oe   (bidir_CORE2PAD_OE)
     );
+    
+    // Logos
+    
+    (* keep *) caravel_logo caravel_logo ();
+    (* keep *) caravel_motto caravel_motto ();
+    (* keep *) open_source open_source ();
+    (* keep *) project_id_textblock project_id_textblock ();
 
 endmodule
 

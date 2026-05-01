@@ -14,6 +14,25 @@ module chip_core #(
     output wire [NUM_BIDIR_PADS-1 :0] bidir_oe    // Output enable
 );
 
+    // Reset with asynchronous assertion and synchronous relase
+    logic [1:0] rst_nd;
+    logic rst_n_sync;
+    
+    always_ff @(posedge clk, negedge rst_n) begin
+        if (!rst_n) begin
+            rst_nd <= '0;
+        end else begin
+            rst_nd[0] <= 1'b1;
+            rst_nd[1] <= rst_nd[0];
+        end
+    end
+    
+    assign rst_n_sync = rst_nd[1];
+    
+    // -----------------
+
+
+
     logic select_output;
     assign select_output = bidir_in[NUM_BIDIR_PADS-1];
 
@@ -43,12 +62,12 @@ module chip_core #(
     wire [24-1:0]      large_io_east_oe_o;
 
     // Set all bidir as output
-    assign bidir_oe = rst_n ? (select_output ?
+    assign bidir_oe = rst_n_sync ? (select_output ?
                           {'0, medium_io_east_oe_o, medium_io_west_oe_o, small_io_east_oe_o, small_io_west_oe_o} :
                           {'0, large_io_east_oe_o, large_io_west_oe_o}
                           ) : '0;
     assign bidir_out =  select_output ? 
-                          {'1, medium_io_east_out_o, medium_io_west_out_o, small_io_east_oe_o, small_io_west_out_o} :
+                          {'1, medium_io_east_out_o, medium_io_west_out_o, small_io_east_out_o, small_io_west_out_o} :
                           {'1, large_io_east_out_o, large_io_west_out_o};
     
     assign small_io_west_in_i = bidir_in[12-1:0];
@@ -99,18 +118,18 @@ module chip_core #(
     wire [(FRAME_BITS_PER_ROW*FABRIC_SMALL_NUM_ROWS)-1:0]    frame_data_small;
     wire [(MAX_FRAMES_PER_COL*FABRIC_SMALL_NUM_COLUMNS)-1:0] frame_strobe_small;
     
-    wire [(FRAME_BITS_PER_ROW*FABRIC_SMALL_NUM_ROWS)-1:0]    frame_data_medium;
-    wire [(MAX_FRAMES_PER_COL*FABRIC_SMALL_NUM_COLUMNS)-1:0] frame_strobe_medium;
+    wire [(FRAME_BITS_PER_ROW*FABRIC_MEDIUM_NUM_ROWS)-1:0]    frame_data_medium;
+    wire [(MAX_FRAMES_PER_COL*FABRIC_MEDIUM_NUM_COLUMNS)-1:0] frame_strobe_medium;
     
-    wire [(FRAME_BITS_PER_ROW*FABRIC_SMALL_NUM_ROWS)-1:0]    frame_data_large;
-    wire [(MAX_FRAMES_PER_COL*FABRIC_SMALL_NUM_COLUMNS)-1:0] frame_strobe_large;
+    wire [(FRAME_BITS_PER_ROW*FABRIC_LARGE_NUM_ROWS)-1:0]    frame_data_large;
+    wire [(MAX_FRAMES_PER_COL*FABRIC_LARGE_NUM_COLUMNS)-1:0] frame_strobe_large;
     
     wire [31:0] bitstream_data;
     wire        bitstream_valid;
 
     fabric_bitbang fabric_bitbang (
         .clk_i   (clk),
-        .rst_ni  (rst_n),
+        .rst_ni  (rst_n_sync),
 
         .sample_i (bidir_in[0]),
         .data_i   (bidir_in[1]),
@@ -129,7 +148,7 @@ module chip_core #(
         .FABRIC_NUM_ROWS    (FABRIC_SMALL_NUM_ROWS)
     ) fabric_config_small (
         .clk_i   (clk),
-        .rst_ni  (rst_n),
+        .rst_ni  (rst_n_sync),
         
         // Bitstream data
         .bitstream_data_i   (bitstream_data),
@@ -151,7 +170,7 @@ module chip_core #(
         .FABRIC_NUM_ROWS    (FABRIC_MEDIUM_NUM_ROWS)
     ) fabric_config_medium (
         .clk_i   (clk),
-        .rst_ni  (rst_n),
+        .rst_ni  (rst_n_sync),
         
         // Bitstream data
         .bitstream_data_i   (bitstream_data),
@@ -173,7 +192,7 @@ module chip_core #(
         .FABRIC_NUM_ROWS    (FABRIC_LARGE_NUM_ROWS)
     ) fabric_config_large (
         .clk_i   (clk),
-        .rst_ni  (rst_n),
+        .rst_ni  (rst_n_sync),
         
         // Bitstream data
         .bitstream_data_i   (bitstream_data),

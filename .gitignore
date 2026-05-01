@@ -8,6 +8,9 @@ build
 macro/
 runs/
 
+# Chip
+final/
+
 # Python
 *.egg-info/
 __pycache__/
