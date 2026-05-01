@@ -1,0 +1,26 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO caravel_logo
+  CLASS BLOCK ;
+  FOREIGN caravel_logo ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 81.310 BY 77.800 ;
+  OBS
+      LAYER li1 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+      LAYER met1 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+      LAYER met2 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+      LAYER met3 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+      LAYER met4 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+      LAYER met5 ;
+        RECT 0.0 0.0 81.310 77.800 ;
+  END
+END caravel_logo
+END LIBRARY
+
