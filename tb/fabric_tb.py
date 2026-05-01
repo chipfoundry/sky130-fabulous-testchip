@@ -14,13 +14,13 @@ from cocotb_tools.runner import get_runner
 from cocotb.types import LogicArray, Logic
 
 proj_path = Path(__file__).resolve().parent
-fabric = os.getenv("FABRIC", "classic_fabric_10x10")
+fabric = os.getenv("FABRIC", "classic_fabric_chipfoundry_large")
 
 if __name__ == "__main__":
 
     sim = os.getenv("SIM", "icarus")
     pdk_root = os.getenv("PDK_ROOT", Path("~/.ciel").expanduser())
-    pdk = os.getenv("PDK", "ihp-sg13g2")
+    pdk = os.getenv("PDK", "sky130A")
     scl = os.getenv("SCL", "sg13g2_stdcell")
     gl = os.getenv("GL", None)
     emulation = os.getenv("EMULATION", False)
