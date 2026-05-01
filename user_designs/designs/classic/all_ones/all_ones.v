@@ -5,7 +5,7 @@
 
 module all_ones (
     `ifdef CLASSIC_FABRIC_CHIPFOUNDRY_LARGE
-    output wire [48-1:0] all
+    output wire [36-1:0] all
     `else
     output wire [24-1:0] all
     `endif
