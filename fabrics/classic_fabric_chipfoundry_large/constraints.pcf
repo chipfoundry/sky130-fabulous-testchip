@@ -102,9 +102,9 @@ set_io word_b[2] X0Y12/A
 set_io word_b[3] X0Y12/B
 
 set_io word_c[0] X14Y1/A
-set_io word_c[1] X14Y1/A
-set_io word_c[2] X14Y2/A
-set_io word_c[3] X14Y3/A
+set_io word_c[1] X14Y2/A
+set_io word_c[2] X14Y3/A
+set_io word_c[3] X14Y4/A
 
 # For the macc_8x8_20 test
 
