@@ -198,6 +198,9 @@ jobs:
       - name: Set Fabric
         run: |
           echo "fabric=classic_fabric_chipfoundry_small" >> $GITHUB_ENV
+      - name: Copy Fabric Files
+        run: |
+          make ${{ env.fabric }}-copy
       - name: Implement the User Designs
         run: |
           cd user_designs; PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command make all
