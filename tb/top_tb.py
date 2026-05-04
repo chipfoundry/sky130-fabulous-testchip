@@ -258,7 +258,7 @@ async def test_all_zeros(dut):
     pcf.write_gtkw(f"{testname}.gtkw", ["all"])
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -302,7 +302,7 @@ async def test_passthrough(dut):
     pcf.write_gtkw(f"{testname}.gtkw", ["a", "b"])
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -352,7 +352,7 @@ async def test_addition(dut):
     pcf.write_gtkw(f"{testname}.gtkw", ["a", "b", "c"])
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -414,7 +414,7 @@ async def test_counter(dut):
     await Timer(10, unit="ns")
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -474,7 +474,7 @@ async def test_multiplication(dut):
     pcf.write_gtkw(f"{testname}.gtkw", ["a", "b", "product"])
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -534,7 +534,7 @@ async def test_ihp_sram_1024x32_1rw(dut):
     await Timer(10, unit="ns")
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
@@ -619,7 +619,7 @@ async def test_mem_1024x32_1rw(dut):
     await Timer(10, unit="ns")
 
     # Setup SPI
-    spi_bus = SpiBus.from_prefix(dut, "fpga", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
+    spi_bus = SpiBus.from_prefix(dut, "spi", bus_separator="_", sclk_name="sclk_PAD", cs_name="cs_n_PAD", mosi_name='mosi_PAD', miso_name='miso_PAD')
 
     spi_config = SpiConfig(
         word_width = 8,
