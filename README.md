@@ -10,7 +10,7 @@ A test chip with three FABulous FPGA fabrics.
 
 > [!NOTE]
 > To build the chip, enable the following PDK version using ciel: d815bb30c9afdf9e264c276a8a2b533108dea3d0
-> In addition the following LibreLane branch must be used: `nix shell github:librelane/librelane/leo/padring-orientation`
+> In addition the following LibreLane branch must be used: `nix shell github:librelane/librelane/dev`
 
 
 This repository contains a collection of fabrics using the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.

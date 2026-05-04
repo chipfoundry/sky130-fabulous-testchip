@@ -74,10 +74,10 @@ module chip_top #(
     // through metal resistors in the pad cells
     wire VDDIO_Q;
     wire VSSIO_Q;
+    `endif
 
     wire AMUXBUS_A;
     wire AMUXBUS_B;
-    `endif
 
     wire clk_PAD2CORE;
     wire rst_n_PAD2CORE;
@@ -258,7 +258,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (3'b001),
         .PAD             (clk_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -305,7 +305,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (3'b001),
         .PAD             (rst_n_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -341,10 +341,11 @@ module chip_top #(
         .HLD_H_N         (spi_mode_TIE_HI_ESD),
         .ENABLE_H        (spi_mode_TIE_HI_ESD),
         .ENABLE_INP_H    (spi_mode_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (spi_mode_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(spi_mode_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (spi_mode_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(spi_mode_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
+        // CMOS input buffer
         .IB_MODE_SEL     ('0),
         .VTRIP_SEL       ('0),
         .SLOW            ('0),
@@ -352,7 +353,8 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        // Disable output buffer, input buffer enabled
+        .DM              (3'b001),
         .PAD             (spi_mode_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -399,7 +401,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (spi_sclk_CORE2PAD_OE ? 3'b110 : 3'b001),
         .PAD             (spi_sclk_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -446,7 +448,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (spi_cs_n_CORE2PAD_OE ? 3'b110 : 3'b001),
         .PAD             (spi_cs_n_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -493,7 +495,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (spi_mosi_CORE2PAD_OE ? 3'b110 : 3'b001),
         .PAD             (spi_mosi_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -540,7 +542,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (spi_miso_CORE2PAD_OE ? 3'b110 : 3'b001),
         .PAD             (spi_miso_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -589,7 +591,7 @@ module chip_top #(
             .ANALOG_EN       ('0),
             .ANALOG_SEL      ('0),
             .ANALOG_POL      ('0),
-            .DM              ('0),
+            .DM              (3'b001),
             .PAD             (fpga_select_PAD[i]),
             .PAD_A_NOESD_H   (),
             .PAD_A_ESD_0_H   (),
@@ -638,7 +640,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (3'b110),
         .PAD             (config_busy_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -685,7 +687,7 @@ module chip_top #(
         .ANALOG_EN       ('0),
         .ANALOG_SEL      ('0),
         .ANALOG_POL      ('0),
-        .DM              ('0),
+        .DM              (3'b110),
         .PAD             (config_done_PAD),
         .PAD_A_NOESD_H   (),
         .PAD_A_ESD_0_H   (),
@@ -732,7 +734,7 @@ module chip_top #(
             .ANALOG_EN       ('0),
             .ANALOG_SEL      ('0),
             .ANALOG_POL      ('0),
-            .DM              ('0),
+            .DM              (bidir_CORE2PAD_OE ? 3'b110 : 3'b001),
             .PAD             (bidir_PAD[i]),
             .PAD_A_NOESD_H   (),
             .PAD_A_ESD_0_H   (),
@@ -752,8 +754,8 @@ module chip_top #(
     (* keep *) chip_core #(
         .NUM_BIDIR_PADS  (NUM_BIDIR_PADS)
     ) i_chip_core (
-        .clk            (clk_PAD2CORE),
-        .rst_n          (rst_n_PAD2CORE),
+        .clk_i          (clk_PAD2CORE),
+        .rst_ni         (rst_n_PAD2CORE),
         
         .spi_mode_i     (spi_mode_PAD2CORE),
     
