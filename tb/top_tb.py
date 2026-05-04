@@ -22,45 +22,117 @@ fabric = os.getenv("FABRIC", "classic_fabric_chipfoundry_large")
 tile_library = os.getenv("TILE_LIBRARY", "classic")
 emulation = os.getenv("EMULATION", False)
 
-lookup = {
-    "X0Y1/A" : "bidir_PAD_0",
-    "X0Y1/B" : "bidir_PAD_1",
-    "X0Y2/A" : "bidir_PAD_2",
-    "X0Y2/B" : "bidir_PAD_3",
-    "X0Y3/A" : "bidir_PAD_4",
-    "X0Y3/B" : "bidir_PAD_5",
-    "X0Y4/A" : "bidir_PAD_6",
-    "X0Y4/B" : "bidir_PAD_7",
-    "X0Y5/A" : "bidir_PAD_8",
-    "X0Y5/B" : "bidir_PAD_9",
-    "X0Y6/A" : "bidir_PAD_10",
-    "X0Y6/B" : "bidir_PAD_11",
-    "X0Y7/A" : "bidir_PAD_12",
-    "X0Y7/B" : "bidir_PAD_13",
-    "X0Y8/A" : "bidir_PAD_14",
-    "X0Y8/B" : "bidir_PAD_15",
-    "X0Y9/A" : "bidir_PAD_16",
-    "X0Y9/B" : "bidir_PAD_17",
-    "X0Y10/A" : "bidir_PAD_18",
-    "X0Y10/B" : "bidir_PAD_19",
-    "X0Y11/A" : "bidir_PAD_20",
-    "X0Y11/B" : "bidir_PAD_21",
-    "X0Y12/A" : "bidir_PAD_22",
-    "X0Y12/B" : "bidir_PAD_23",
+fabric_data = {
+    "classic_fabric_chipfoundry_large": {
+        "select": 0,
+        "rows" : 14,
+        "columns" : 15,
+        "lookup" : {
+            "X0Y1/A" : "bidir_PAD_0",
+            "X0Y1/B" : "bidir_PAD_1",
+            "X0Y2/A" : "bidir_PAD_2",
+            "X0Y2/B" : "bidir_PAD_3",
+            "X0Y3/A" : "bidir_PAD_4",
+            "X0Y3/B" : "bidir_PAD_5",
+            "X0Y4/A" : "bidir_PAD_6",
+            "X0Y4/B" : "bidir_PAD_7",
+            "X0Y5/A" : "bidir_PAD_8",
+            "X0Y5/B" : "bidir_PAD_9",
+            "X0Y6/A" : "bidir_PAD_10",
+            "X0Y6/B" : "bidir_PAD_11",
+            "X0Y7/A" : "bidir_PAD_12",
+            "X0Y7/B" : "bidir_PAD_13",
+            "X0Y8/A" : "bidir_PAD_14",
+            "X0Y8/B" : "bidir_PAD_15",
+            "X0Y9/A" : "bidir_PAD_16",
+            "X0Y9/B" : "bidir_PAD_17",
+            "X0Y10/A" : "bidir_PAD_18",
+            "X0Y10/B" : "bidir_PAD_19",
+            "X0Y11/A" : "bidir_PAD_20",
+            "X0Y11/B" : "bidir_PAD_21",
+            "X0Y12/A" : "bidir_PAD_22",
+            "X0Y12/B" : "bidir_PAD_23",
 
-    "X14Y1/A" : "bidir_PAD_24",
-    "X14Y2/A" : "bidir_PAD_25",
-    "X14Y3/A" : "bidir_PAD_26",
-    "X14Y4/A" : "bidir_PAD_27",
-    "X14Y5/A" : "bidir_PAD_28",
-    "X14Y6/A" : "bidir_PAD_29",
-    "X14Y7/A" : "bidir_PAD_30",
-    "X14Y8/A" : "bidir_PAD_31",
-    "X14Y9/A" : "bidir_PAD_32",
-    "X14Y10/A" : "bidir_PAD_33",
-    "X14Y11/A" : "bidir_PAD_34",
-    "X14Y12/A" : "bidir_PAD_35",
+            "X14Y1/A" : "bidir_PAD_24",
+            "X14Y2/A" : "bidir_PAD_25",
+            "X14Y3/A" : "bidir_PAD_26",
+            "X14Y4/A" : "bidir_PAD_27",
+            "X14Y5/A" : "bidir_PAD_28",
+            "X14Y6/A" : "bidir_PAD_29",
+            "X14Y7/A" : "bidir_PAD_30",
+            "X14Y8/A" : "bidir_PAD_31",
+            "X14Y9/A" : "bidir_PAD_32",
+            "X14Y10/A" : "bidir_PAD_33",
+            "X14Y11/A" : "bidir_PAD_34",
+            "X14Y12/A" : "bidir_PAD_35",
+        },
+    },
+    "classic_fabric_chipfoundry_medium": {
+        "select": 2,
+        "rows" : 8,
+        "columns" : 10,
+        "lookup" : {
+            "X0Y1/A" : "bidir_PAD_0",
+            "X0Y1/B" : "bidir_PAD_1",
+            "X0Y2/A" : "bidir_PAD_2",
+            "X0Y2/B" : "bidir_PAD_3",
+            "X0Y3/A" : "bidir_PAD_4",
+            "X0Y3/B" : "bidir_PAD_5",
+            "X0Y4/A" : "bidir_PAD_6",
+            "X0Y4/B" : "bidir_PAD_7",
+            "X0Y5/A" : "bidir_PAD_8",
+            "X0Y5/B" : "bidir_PAD_9",
+            "X0Y6/A" : "bidir_PAD_10",
+            "X0Y6/B" : "bidir_PAD_11",
+
+            "X9Y1/A" : "bidir_PAD_12",
+            "X9Y1/B" : "bidir_PAD_13",
+            "X9Y2/A" : "bidir_PAD_14",
+            "X9Y2/B" : "bidir_PAD_15",
+            "X9Y3/A" : "bidir_PAD_16",
+            "X9Y3/B" : "bidir_PAD_17",
+            "X9Y4/A" : "bidir_PAD_18",
+            "X9Y4/B" : "bidir_PAD_19",
+            "X9Y5/A" : "bidir_PAD_20",
+            "X9Y5/B" : "bidir_PAD_21",
+            "X9Y6/A" : "bidir_PAD_22",
+            "X9Y6/B" : "bidir_PAD_23",
+        },
+    },
+    "classic_fabric_chipfoundry_small": {
+        "select": 1,
+        "rows" : 8,
+        "columns" : 6,
+        "lookup" : {
+            "X0Y1/A" : "bidir_PAD_0",
+            "X0Y1/B" : "bidir_PAD_1",
+            "X0Y2/A" : "bidir_PAD_2",
+            "X0Y2/B" : "bidir_PAD_3",
+            "X0Y3/A" : "bidir_PAD_4",
+            "X0Y3/B" : "bidir_PAD_5",
+            "X0Y4/A" : "bidir_PAD_6",
+            "X0Y4/B" : "bidir_PAD_7",
+            "X0Y5/A" : "bidir_PAD_8",
+            "X0Y5/B" : "bidir_PAD_9",
+            "X0Y6/A" : "bidir_PAD_10",
+            "X0Y6/B" : "bidir_PAD_11",
+
+            "X5Y1/A" : "bidir_PAD_12",
+            "X5Y1/B" : "bidir_PAD_13",
+            "X5Y2/A" : "bidir_PAD_14",
+            "X5Y2/B" : "bidir_PAD_15",
+            "X5Y3/A" : "bidir_PAD_16",
+            "X5Y3/B" : "bidir_PAD_17",
+            "X5Y4/A" : "bidir_PAD_18",
+            "X5Y4/B" : "bidir_PAD_19",
+            "X5Y5/A" : "bidir_PAD_20",
+            "X5Y5/B" : "bidir_PAD_21",
+            "X5Y6/A" : "bidir_PAD_22",
+            "X5Y6/B" : "bidir_PAD_23",
+        },
+    },
 }
+
 
 async def clear_bitstream_spi(spi_master):
     if emulation:
@@ -75,8 +147,8 @@ async def clear_bitstream_spi(spi_master):
     BITSTREAM_START = 0xFAB0FAB1
     DESYNC_FLAG = 20
 
-    NUM_ROWS = 14
-    NUM_COLUMNS = 15
+    NUM_ROWS = fabric_data[fabric]["rows"]
+    NUM_COLUMNS = fabric_data[fabric]["columns"]
 
     # Header
     await spi_master.write([0xFA, 0xB0, 0xFA, 0xB1])
@@ -210,7 +282,7 @@ async def test_all_ones(dut):
 
     testname = "all_ones"
 
-    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", lookup)
+    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", fabric_data[fabric]["lookup"])
     pcf.write_gtkw(f"{testname}.gtkw", ["all"])
 
     # Setup SPI
@@ -229,7 +301,7 @@ async def test_all_ones(dut):
 
     # Static setup
     dut.spi_mode_PAD.value = 1 # Configure FPGA as receiver
-    dut.fpga_select_PAD.value = 0 # Select Large FPGA
+    dut.fpga_select_PAD.value = fabric_data[fabric]["select"] # Select FPGA
 
     cocotb.start_soon(Clock(dut.clk_PAD, 10, 'ns').start())
 
@@ -254,7 +326,7 @@ async def test_all_zeros(dut):
 
     testname = "all_zeros"
 
-    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", lookup)
+    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", fabric_data[fabric]["lookup"])
     pcf.write_gtkw(f"{testname}.gtkw", ["all"])
 
     # Setup SPI
@@ -273,7 +345,7 @@ async def test_all_zeros(dut):
 
     # Static setup
     dut.spi_mode_PAD.value = 1 # Configure FPGA as receiver
-    dut.fpga_select_PAD.value = 0 # Select Large FPGA
+    dut.fpga_select_PAD.value = fabric_data[fabric]["select"] # Select FPGA
 
     cocotb.start_soon(Clock(dut.clk_PAD, 10, 'ns').start())
 
@@ -298,7 +370,7 @@ async def test_passthrough(dut):
 
     testname = "passthrough"
 
-    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", lookup)
+    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", fabric_data[fabric]["lookup"])
     pcf.write_gtkw(f"{testname}.gtkw", ["a", "b"])
 
     # Setup SPI
@@ -317,7 +389,7 @@ async def test_passthrough(dut):
 
     # Static setup
     dut.spi_mode_PAD.value = 1 # Configure FPGA as receiver
-    dut.fpga_select_PAD.value = 0 # Select Large FPGA
+    dut.fpga_select_PAD.value = fabric_data[fabric]["select"] # Select FPGA
 
     cocotb.start_soon(Clock(dut.clk_PAD, 10, 'ns').start())
 
@@ -348,7 +420,7 @@ async def test_addition(dut):
 
     testname = "addition"
 
-    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", lookup)
+    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", fabric_data[fabric]["lookup"])
     pcf.write_gtkw(f"{testname}.gtkw", ["a", "b", "c"])
 
     # Setup SPI
@@ -367,7 +439,7 @@ async def test_addition(dut):
 
     # Static setup
     dut.spi_mode_PAD.value = 1 # Configure FPGA as receiver
-    dut.fpga_select_PAD.value = 0 # Select Large FPGA
+    dut.fpga_select_PAD.value = fabric_data[fabric]["select"] # Select FPGA
 
     cocotb.start_soon(Clock(dut.clk_PAD, 10, 'ns').start())
 
@@ -403,7 +475,7 @@ async def test_counter(dut):
 
     testname = "counter"
 
-    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", lookup)
+    pcf = PCF(dut, proj_path / f"../fabrics/{fabric}/constraints.pcf", fabric_data[fabric]["lookup"])
     pcf.write_gtkw(f"{testname}.gtkw", ["clk1", "clk2", "rst", "ena", "c"])
 
     # Reset
@@ -429,7 +501,7 @@ async def test_counter(dut):
 
     # Static setup
     dut.spi_mode_PAD.value = 1 # Configure FPGA as receiver
-    dut.fpga_select_PAD.value = 0 # Select Large FPGA
+    dut.fpga_select_PAD.value = fabric_data[fabric]["select"] # Select FPGA
 
     cocotb.start_soon(Clock(dut.clk_PAD, 10, 'ns').start())
 
@@ -753,9 +825,7 @@ if __name__ == "__main__":
         sources.append(tiles_path / "custom.v")
 
         # Add fabric RTL netlist
-        sources.append(proj_path / f'../fabrics/{fabric}/macro/{pdk}/fabulous/{fabric}.v')
-    
-        # secondary fabrics
+        sources.append(proj_path / f'../fabrics/classic_fabric_chipfoundry_large/macro/{pdk}/fabulous/classic_fabric_chipfoundry_large.v')
         sources.append(proj_path / f'../fabrics/classic_fabric_chipfoundry_medium/macro/{pdk}/fabulous/classic_fabric_chipfoundry_medium.v')
         sources.append(proj_path / f'../fabrics/classic_fabric_chipfoundry_small/macro/{pdk}/fabulous/classic_fabric_chipfoundry_small.v')
     

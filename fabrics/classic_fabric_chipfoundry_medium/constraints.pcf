@@ -53,8 +53,6 @@ set_io c[4] X9Y4/A
 set_io c[5] X9Y4/B
 set_io c[6] X9Y5/A
 set_io c[7] X9Y5/B
-set_io c[8] X9Y6/A
-set_io c[9] X9Y6/B
 
 # For the macc_8x8_20 test
 

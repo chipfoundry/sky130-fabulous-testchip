@@ -148,7 +148,7 @@ jobs:
           nix_system: x86_64-linux
       - name: Get the tile library
         run: |
-          echo "TILE_LIBRARY=$(echo "${{ matrix.fabrics }}" | cut -d'_' -f1)" >> $GITHUB_ENV
+          echo "TILE_LIBRARY=classic" >> $GITHUB_ENV
           echo "TILE_LIBRARY_SHORT_HASH=$(git rev-parse --short HEAD:ip/fabulous-tiles)" >> $GITHUB_ENV
       - name: Restore the Fabric classic_fabric_chipfoundry_small
         uses: actions/cache/restore@v5
@@ -169,22 +169,41 @@ jobs:
           key: cache-fabric-classic_fabric_chipfoundry_large-${{ env.pdk }}-${{ env.TILE_LIBRARY_SHORT_HASH }}
           fail-on-cache-miss: true
 
-
-
-
-      - name: Upload Macro Folder
-        if: success() || failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.fabrics }}_${{ matrix.pdk }}
-          path: fabrics/${{ matrix.fabrics }}/macro/${{ matrix.pdk }}/
-          include-hidden-files: true
+      - name: Set Fabric
+        run: |
+          echo "fabric=classic_fabric_chipfoundry_large" >> $GITHUB_ENV
       - name: Implement the User Designs
         run: |
-          cd user_designs; PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command make all
-      - name: Simulate the Fabric (RTL Emulation)
+          cd user_designs; PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command make all
+      - name: Simulate the Chip (RTL Emulation)
         run: |
-          EMULATION=counter PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 fabric_tb.py"
+          EMULATION=counter PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
       - name: Simulate the Fabric (RTL Simulation)
         run: |
-          PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabrics }} nix develop --command bash -c "cd tb; python3 fabric_tb.py"
+          PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
+
+      - name: Set Fabric
+        run: |
+          echo "fabric=classic_fabric_chipfoundry_medium" >> $GITHUB_ENV
+      - name: Implement the User Designs
+        run: |
+          cd user_designs; PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command make all
+      - name: Simulate the Chip (RTL Emulation)
+        run: |
+          EMULATION=counter PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
+      - name: Simulate the Fabric (RTL Simulation)
+        run: |
+          PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
+
+      - name: Set Fabric
+        run: |
+          echo "fabric=classic_fabric_chipfoundry_small" >> $GITHUB_ENV
+      - name: Implement the User Designs
+        run: |
+          cd user_designs; PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command make all
+      - name: Simulate the Chip (RTL Emulation)
+        run: |
+          EMULATION=counter PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ env.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
+      - name: Simulate the Fabric (RTL Simulation)
+        run: |
+          PDK=${{ matrix.pdk }} TILE_LIBRARY=${{ env.TILE_LIBRARY }} FABRIC=${{ matrix.fabric }} nix develop --command bash -c "cd tb; python3 top_tb.py"
