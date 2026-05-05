@@ -150,6 +150,12 @@ jobs:
         run: |
           echo "TILE_LIBRARY=classic" >> $GITHUB_ENV
           echo "TILE_LIBRARY_SHORT_HASH=$(git rev-parse --short HEAD:ip/fabulous-tiles)" >> $GITHUB_ENV
+      - name: Restore the tiles
+        uses: actions/cache/restore@v5
+        with:
+          path: ip/fabulous-tiles/tiles
+          key: cache-tiles-${{ env.TILE_LIBRARY }}-${{ env.pdk }}-${{ env.TILE_LIBRARY_SHORT_HASH }}
+          fail-on-cache-miss: true
       - name: Restore the Fabric classic_fabric_chipfoundry_small
         uses: actions/cache/restore@v5
         with:
