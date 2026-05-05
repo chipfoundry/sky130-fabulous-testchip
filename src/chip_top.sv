@@ -3,27 +3,6 @@
 
 `default_nettype none
 
-/*
-Pad budget
-
-pads: 63
-Power ground: 16
-
-pads: 47
-clock reset: 2
-
-pads: 45
-SPI: 4
-FPGA select: 2
-active/passive: 1
-
-pads: 38
-busy/configured: 2
-
-36 I/O for FPGA
-
-*/
-
 module chip_top #(
     // Power/ground pads for core
     parameter NUM_VCCD_PADS = 4,
@@ -55,7 +34,8 @@ module chip_top #(
     inout  wire [1:0] fpga_select_PAD,
 
     inout  wire config_busy_PAD,
-    inout  wire config_done_PAD,
+    
+    inout  wire global_enable_PAD,
     
     inout  wire [NUM_BIDIR_PADS-1:0] bidir_PAD
 );
@@ -105,14 +85,14 @@ module chip_top #(
     wire [1:0] fpga_select_PAD2CORE;
 
     wire config_busy_CORE2PAD;
-    wire config_done_CORE2PAD;
+
+    wire global_enable_PAD2CORE;
 
     wire [NUM_BIDIR_PADS-1:0] bidir_PAD2CORE;
     wire [NUM_BIDIR_PADS-1:0] bidir_CORE2PAD;
     wire [NUM_BIDIR_PADS-1:0] bidir_CORE2PAD_OE;
     
     // Connect power domains!
-    
     generate
     for (genvar i=0; i<2*4; i++) begin : vcchib_vccd_and_vswitch_vddio_slices
         // VCCHIB to VCCD
@@ -137,6 +117,27 @@ module chip_top #(
         );
     end
     endgenerate
+
+    // Supply the ENABLE_H signal for the I/Os from the outside
+    (* keep *)
+    sky130_ef_io__analog_esd_pad global_enable_pad (
+        /*`ifdef USE_POWER_PINS
+        .VCCD       (VCCD),
+        .VCCHIB     (VCCD),
+        .VDDA       (VDDA),
+        .VDDIO      (VDDIO),
+        .VDDIO_Q    (VDDIO_Q),
+        .VSSA       (VSSA),
+        .VSSD       (VSSD),
+        .VSSIO      (VSSIO),
+        .VSSIO_Q    (VSSIO_Q),
+        .VSWITCH    (VDDIO),
+        `endif*/
+        .AMUXBUS_A  (AMUXBUS_A),
+        .AMUXBUS_B  (AMUXBUS_B),
+        .P_PAD       (global_enable_PAD),
+        .P_CORE      (global_enable_PAD2CORE)
+    );
 
     // Power/ground pad instances
     generate
@@ -245,10 +246,10 @@ module chip_top #(
         .OUT             ('0),
         .OE_N            ('1),
         .HLD_H_N         (clock_TIE_HI_ESD),
-        .ENABLE_H        (clock_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (clock_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (clock_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(clock_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (clock_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(clock_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -292,10 +293,10 @@ module chip_top #(
         .OUT             ('0),
         .OE_N            ('1),
         .HLD_H_N         (reset_TIE_HI_ESD),
-        .ENABLE_H        (reset_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (reset_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (reset_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(reset_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (reset_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(reset_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -339,7 +340,7 @@ module chip_top #(
         .OUT             ('0),
         .OE_N            ('1),
         .HLD_H_N         (spi_mode_TIE_HI_ESD),
-        .ENABLE_H        (spi_mode_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (spi_mode_TIE_HI_ESD),
         .ENABLE_VDDA_H   (spi_mode_TIE_HI_ESD),
         .ENABLE_VSWITCH_H(spi_mode_TIE_HI_ESD),
@@ -388,10 +389,10 @@ module chip_top #(
         .OUT             (spi_sclk_CORE2PAD),
         .OE_N            (! spi_sclk_CORE2PAD_OE),
         .HLD_H_N         (spi_sclk_TIE_HI_ESD),
-        .ENABLE_H        (spi_sclk_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (spi_sclk_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (spi_sclk_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(spi_sclk_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (spi_sclk_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(spi_sclk_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -435,10 +436,10 @@ module chip_top #(
         .OUT             (spi_cs_n_CORE2PAD),
         .OE_N            (! spi_cs_n_CORE2PAD_OE),
         .HLD_H_N         (spi_cs_n_TIE_HI_ESD),
-        .ENABLE_H        (spi_cs_n_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (spi_cs_n_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (spi_cs_n_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(spi_cs_n_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (spi_cs_n_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(spi_cs_n_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -482,10 +483,10 @@ module chip_top #(
         .OUT             (spi_mosi_CORE2PAD),
         .OE_N            (! spi_mosi_CORE2PAD_OE),
         .HLD_H_N         (spi_mosi_TIE_HI_ESD),
-        .ENABLE_H        (spi_mosi_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (spi_mosi_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (spi_mosi_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(spi_mosi_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (spi_mosi_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(spi_mosi_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -529,10 +530,10 @@ module chip_top #(
         .OUT             (spi_miso_CORE2PAD),
         .OE_N            (! spi_miso_CORE2PAD_OE),
         .HLD_H_N         (spi_miso_TIE_HI_ESD),
-        .ENABLE_H        (spi_miso_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (spi_miso_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (spi_miso_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(spi_miso_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (spi_miso_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(spi_miso_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -578,10 +579,10 @@ module chip_top #(
             .OUT             ('0),
             .OE_N            ('1),
             .HLD_H_N         (TIE_HI_ESD),
-            .ENABLE_H        (TIE_HI_ESD),
+            .ENABLE_H        (global_enable_PAD2CORE),
             .ENABLE_INP_H    (TIE_HI_ESD),
-            .ENABLE_VDDA_H   (TIE_LO_ESD),
-            .ENABLE_VSWITCH_H(TIE_LO_ESD),
+            .ENABLE_VDDA_H   (TIE_HI_ESD),
+            .ENABLE_VSWITCH_H(TIE_HI_ESD),
             .ENABLE_VDDIO    ('1),
             .INP_DIS         ('0),
             .IB_MODE_SEL     ('0),
@@ -627,10 +628,10 @@ module chip_top #(
         .OUT             (config_busy_CORE2PAD),
         .OE_N            ('0),
         .HLD_H_N         (config_busy_TIE_HI_ESD),
-        .ENABLE_H        (config_busy_TIE_HI_ESD),
+        .ENABLE_H        (global_enable_PAD2CORE),
         .ENABLE_INP_H    (config_busy_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (config_busy_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(config_busy_TIE_LO_ESD),
+        .ENABLE_VDDA_H   (config_busy_TIE_HI_ESD),
+        .ENABLE_VSWITCH_H(config_busy_TIE_HI_ESD),
         .ENABLE_VDDIO    ('1),
         .INP_DIS         ('0),
         .IB_MODE_SEL     ('0),
@@ -651,53 +652,6 @@ module chip_top #(
         .IN_H            (),
         .TIE_HI_ESD      (config_busy_TIE_HI_ESD),
         .TIE_LO_ESD      (config_busy_TIE_LO_ESD)
-    );
-
-    // Config Done
-
-    wire config_done_TIE_HI_ESD;
-    wire config_done_TIE_LO_ESD;
-
-    sky130_ef_io__gpiov2_pad config_done_pad (
-        `ifdef USE_POWER_PINS
-        .VDDIO      (VDDIO),
-        .VDDIO_Q    (VDDIO_Q),
-        .VDDA       (VDDA),
-        .VCCD       (VCCD),
-        .VSWITCH    (VDDIO),
-        .VCCHIB     (VCCD),
-        .VSSA       (VSSA),
-        .VSSD       (VSSD),
-        .VSSIO_Q    (VSSIO_Q),
-        .VSSIO      (VSSIO),
-        `endif
-        .OUT             (config_done_CORE2PAD),
-        .OE_N            ('0),
-        .HLD_H_N         (config_done_TIE_HI_ESD),
-        .ENABLE_H        (config_done_TIE_HI_ESD),
-        .ENABLE_INP_H    (config_done_TIE_HI_ESD),
-        .ENABLE_VDDA_H   (config_done_TIE_LO_ESD),
-        .ENABLE_VSWITCH_H(config_done_TIE_LO_ESD),
-        .ENABLE_VDDIO    ('1),
-        .INP_DIS         ('0),
-        .IB_MODE_SEL     ('0),
-        .VTRIP_SEL       ('0),
-        .SLOW            ('0),
-        .HLD_OVR         ('0),
-        .ANALOG_EN       ('0),
-        .ANALOG_SEL      ('0),
-        .ANALOG_POL      ('0),
-        .DM              (3'b110),
-        .PAD             (config_done_PAD),
-        .PAD_A_NOESD_H   (),
-        .PAD_A_ESD_0_H   (),
-        .PAD_A_ESD_1_H   (),
-        .AMUXBUS_A       (AMUXBUS_A),
-        .AMUXBUS_B       (AMUXBUS_B),
-        .IN              (),
-        .IN_H            (),
-        .TIE_HI_ESD      (config_done_TIE_HI_ESD),
-        .TIE_LO_ESD      (config_done_TIE_LO_ESD)
     );
 
     generate
@@ -721,10 +675,10 @@ module chip_top #(
             .OUT             (bidir_CORE2PAD[i]),
             .OE_N            (! bidir_CORE2PAD_OE[i]),
             .HLD_H_N         (TIE_HI_ESD),
-            .ENABLE_H        (TIE_HI_ESD),
+            .ENABLE_H        (global_enable_PAD2CORE),
             .ENABLE_INP_H    (TIE_HI_ESD),
-            .ENABLE_VDDA_H   (TIE_LO_ESD),
-            .ENABLE_VSWITCH_H(TIE_LO_ESD),
+            .ENABLE_VDDA_H   (TIE_HI_ESD),
+            .ENABLE_VSWITCH_H(TIE_HI_ESD),
             .ENABLE_VDDIO    ('1),
             .INP_DIS         ('0),
             .IB_MODE_SEL     ('0),
@@ -734,7 +688,7 @@ module chip_top #(
             .ANALOG_EN       ('0),
             .ANALOG_SEL      ('0),
             .ANALOG_POL      ('0),
-            .DM              (bidir_CORE2PAD_OE ? 3'b110 : 3'b001),
+            .DM              (bidir_CORE2PAD_OE[i] ? 3'b110 : 3'b001),
             .PAD             (bidir_PAD[i]),
             .PAD_A_NOESD_H   (),
             .PAD_A_ESD_0_H   (),
@@ -778,7 +732,7 @@ module chip_top #(
         .fpga_select_i  (fpga_select_PAD2CORE),
 
         .config_busy_o  (config_busy_CORE2PAD),
-        .config_done_o  (config_done_CORE2PAD),
+        .config_done_o  ( ),
         
         .bidir_in   (bidir_PAD2CORE),
         .bidir_out  (bidir_CORE2PAD),
@@ -791,6 +745,7 @@ module chip_top #(
     (* keep *) caravel_motto caravel_motto ();
     (* keep *) open_source open_source ();
     (* keep *) project_id_textblock project_id_textblock ();
+    (* keep *) logo_fabulous logo_fabulous ();
 
 endmodule
 

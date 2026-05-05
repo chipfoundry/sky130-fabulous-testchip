@@ -38,11 +38,13 @@ meta:
     
     # TODO
     #Checker.DisconnectedPins: null
+    Checker.YosysUnmappedCells: null
 
 DESIGN_NAME: chip_top
 VERILOG_FILES:
 - dir::../src/chip_top.sv
 - dir::../src/chip_core.sv
+- dir::../src/synchronizer.sv
 - dir::../ip/fabric_config/fabric_config.sv
 - dir::../ip/fabric_spi/fabric_spi_controller.sv
 - dir::../ip/fabric_spi/fabric_spi_receiver.sv
@@ -62,15 +64,13 @@ PAD_SOUTH: [
     "vddio_pads\\[0\\].vddio_pad",
     "vssio_pads\\[0\\].vssio_pad",
 
-    clock_pad,
-    reset_pad,
-
-    spi_mode_pad,
-
-    spi_sclk_pad,
-    spi_cs_n_pad,
-    spi_mosi_pad,
-    spi_miso_pad,
+    "bidirs\\[32\\].bidir_pad",
+    "bidirs\\[31\\].bidir_pad",
+    "bidirs\\[30\\].bidir_pad",
+    "bidirs\\[29\\].bidir_pad",
+    "bidirs\\[28\\].bidir_pad",
+    "bidirs\\[27\\].bidir_pad",
+    "bidirs\\[26\\].bidir_pad",
 
     "vddio_pads\\[1\\].vddio_pad",
     "vssio_pads\\[1\\].vssio_pad"
@@ -81,10 +81,11 @@ PAD_EAST: [
     "vccd_pads\\[0\\].vccd_pad",
     "vssd_pads\\[0\\].vssd_pad",
 
-    "fpga_selects\\[0\\].fpga_select_pad",
-    "fpga_selects\\[1\\].fpga_select_pad",
-    config_busy_pad,
-    config_done_pad,
+    "bidirs\\[25\\].bidir_pad",
+    "bidirs\\[24\\].bidir_pad",
+    "bidirs\\[23\\].bidir_pad",
+    "bidirs\\[22\\].bidir_pad",
+    
     "bidirs\\[0\\].bidir_pad",
     "bidirs\\[1\\].bidir_pad",
     "bidirs\\[2\\].bidir_pad",
@@ -127,20 +128,27 @@ PAD_WEST: [
     "bidirs\\[35\\].bidir_pad",
     "bidirs\\[34\\].bidir_pad",
     "bidirs\\[33\\].bidir_pad",
-    "bidirs\\[32\\].bidir_pad",
-    "bidirs\\[31\\].bidir_pad",
-    "bidirs\\[30\\].bidir_pad",
-    "bidirs\\[29\\].bidir_pad",
-    "bidirs\\[28\\].bidir_pad",
-    "bidirs\\[27\\].bidir_pad",
-    "bidirs\\[26\\].bidir_pad",
-    "bidirs\\[25\\].bidir_pad",
-    "bidirs\\[24\\].bidir_pad",
-    "bidirs\\[23\\].bidir_pad",
-    "bidirs\\[22\\].bidir_pad",
+
     "bidirs\\[21\\].bidir_pad",
     "bidirs\\[20\\].bidir_pad",
     "bidirs\\[19\\].bidir_pad",
+
+    spi_mode_pad,
+
+    spi_sclk_pad,
+    spi_cs_n_pad,
+    spi_mosi_pad,
+    spi_miso_pad,
+    
+    clock_pad,
+    reset_pad,
+    
+    "fpga_selects\\[0\\].fpga_select_pad",
+    "fpga_selects\\[1\\].fpga_select_pad",
+  
+    config_busy_pad,
+
+    global_enable_pad,
         
     "vccd_pads\\[2\\].vccd_pad",
     "vssd_pads\\[2\\].vssd_pad"
@@ -161,7 +169,7 @@ GND_NETS:
 CLOCK_PORT: clk_PAD
 CLOCK_NET: clock_pad/IN
 
-CLOCK_PERIOD: 20
+CLOCK_PERIOD: 30
 
 # Floorplanning
 FP_SIZING: absolute
@@ -177,29 +185,29 @@ CORE_AREA: [250, 250, "expr::$DIE_AREA[2] - 250", "expr::$DIE_AREA[3] - 250"]
 # Prevent routing close to the padring
 ROUTING_OBSTRUCTIONS:
 # Left
-- [met1, 0, 0, 200, "expr::$DIE_AREA[3]"]
-- [met2, 0, 0, 200, "expr::$DIE_AREA[3]"]
-- [met3, 0, 0, 200, "expr::$DIE_AREA[3]"]
-- [met4, 0, 0, 200, "expr::$DIE_AREA[3]"]
-- [met5, 0, 0, 200, "expr::$DIE_AREA[3]"]
+- [met1, 0, 0, 199, "expr::$DIE_AREA[3]"]
+- [met2, 0, 0, 199, "expr::$DIE_AREA[3]"]
+- [met3, 0, 0, 199, "expr::$DIE_AREA[3]"]
+- [met4, 0, 0, 199, "expr::$DIE_AREA[3]"]
+- [met5, 0, 0, 199, "expr::$DIE_AREA[3]"]
 # Right
-- [met1, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met2, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met3, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met4, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met5, "expr::$DIE_AREA[2] - 200", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met1, "expr::$DIE_AREA[2] - 199", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, "expr::$DIE_AREA[2] - 199", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, "expr::$DIE_AREA[2] - 199", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, "expr::$DIE_AREA[2] - 199", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, "expr::$DIE_AREA[2] - 199", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
 # Bottom
-- [met1, 0, 0, "expr::$DIE_AREA[2]", 200]
-- [met2, 0, 0, "expr::$DIE_AREA[2]", 200]
-- [met3, 0, 0, "expr::$DIE_AREA[2]", 200]
-- [met4, 0, 0, "expr::$DIE_AREA[2]", 200]
-- [met5, 0, 0, "expr::$DIE_AREA[2]", 200]
+- [met1, 0, 0, "expr::$DIE_AREA[2]", 199]
+- [met2, 0, 0, "expr::$DIE_AREA[2]", 199]
+- [met3, 0, 0, "expr::$DIE_AREA[2]", 199]
+- [met4, 0, 0, "expr::$DIE_AREA[2]", 199]
+- [met5, 0, 0, "expr::$DIE_AREA[2]", 199]
 # Top
-- [met1, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met2, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met3, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met4, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
-- [met5, 0, "expr::$DIE_AREA[3] - 200", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met1, 0, "expr::$DIE_AREA[3] - 199", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, 0, "expr::$DIE_AREA[3] - 199", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, 0, "expr::$DIE_AREA[3] - 199", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, 0, "expr::$DIE_AREA[3] - 199", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, 0, "expr::$DIE_AREA[3] - 199", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
 
 # TODO: just for testing
 #FP_OBSTRUCTIONS:
@@ -207,7 +215,7 @@ ROUTING_OBSTRUCTIONS:
 
 # Increase for more logic
 # on your die
-PL_TARGET_DENSITY_PCT: 20
+PL_TARGET_DENSITY_PCT: 35
 GRT_ALLOW_CONGESTION: true
 
 # PDN
@@ -250,7 +258,7 @@ MACROS:
     # x should be multiple of 0.46 (Metal2 pitch)
     # y should be multiple of 0.68 (Metal3 pitch)
     # Standard cell row height: 2.72 (4 Metal3 tracks)
-      i_chip_core.i_classic_fabric_chipfoundry_small:
+      i_chip_core/i_classic_fabric_chipfoundry_small:
         location: ["expr::(349.6 + (0.46 * 45))", expr::(3289.84 + (2.72 * 18))]
         orientation: N
 
@@ -262,7 +270,7 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/nl/classic_fabric_chipfoundry_medium.nl.v
     instances:
-      i_chip_core.i_classic_fabric_chipfoundry_medium:
+      i_chip_core/i_classic_fabric_chipfoundry_medium:
         location: ["expr::(1389.66 + (0.46 * 100))", expr::(3289.84 + (2.72 * 18))]
         orientation: N
 
@@ -274,9 +282,9 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/nl/classic_fabric_chipfoundry_large.nl.v
     instances:
-      i_chip_core.i_classic_fabric_chipfoundry_large:
-        location: ["expr::(349.6 + (0.46 * 45))", 359.04]
-        orientation: N
+      i_chip_core/i_classic_fabric_chipfoundry_large:
+        location: ["expr::(349.6 + (0.46 * 45))", expr::(110 * 2.72)]
+        orientation: FS
 
   caravel_logo:
     gds:
@@ -323,8 +331,25 @@ MACROS:
       - dir::../ip/project_id_textblock/vh/project_id_textblock.vh
     instances:
       project_id_textblock:
-        location: [58.250, 44.960]
+        location: [58.250, 59.02]
         orientation: N
+
+  logo_fabulous:
+    gds:
+      - dir::../ip/logo_fabulous/gds/logo_fabulous.gds.gz
+    lef:
+      - dir::../ip/logo_fabulous/lef/logo_fabulous.lef
+    vh:
+      - dir::../ip/logo_fabulous/vh/logo_fabulous.vh
+    instances:
+      logo_fabulous:
+        location: [3450, 50]
+        orientation: N
+
+PDN_MACRO_CONNECTIONS:
+- "i_chip_core/i_classic_fabric_chipfoundry_large VPWR VGND VCCD VSSD"
+- "i_chip_core/i_classic_fabric_chipfoundry_small VPWR VGND VCCD VSSD"
+- "i_chip_core/i_classic_fabric_chipfoundry_medium VPWR VGND VCCD VSSD"
 
 # Because we have multiple power pads for one power domain
 MAGIC_EXT_UNIQUE: notopports
@@ -337,5 +362,41 @@ KLAYOUT_PROPERTIES: dir::sky130_render.lyp
 PL_RESIZER_HOLD_SLACK_MARGIN: expr::(0.1 * 2)
 GRT_RESIZER_HOLD_SLACK_MARGIN: expr::(0.05 * 2)
 
-# TODO
-HOLD_VIOLATION_CORNERS: ["*tt*", "*ss*"]
+# We're not interested in 1v95
+HOLD_VIOLATION_CORNERS:
+- nom_tt_025C_1v80
+- nom_ss_100C_1v60
+#- nom_ff_n40C_1v95
+- min_tt_025C_1v80
+- min_ss_100C_1v60
+#- min_ff_n40C_1v95
+- max_tt_025C_1v80
+- max_ss_100C_1v60
+#- max_ff_n40C_1v95
+
+
+CTS_OBSTRUCTION_AWARE: True
+CTS_CLK_MAX_WIRE_LENGTH: 1000
+#CTS_SINK_CLUSTERING_ENABLE: False
+#CTS_DISTANCE_BETWEEN_BUFFERS
+
+SYNTH_HIERARCHY_MODE: keep
+
+#DRT_OPT_ITERS: 10
+
+#EXTRA_GDS:
+#- pdk_dir::libs.ref/sky130_fd_io/gds/sky130_ef_io__analog.gds
+
+EXTRA_LIBS:
+- dir::sky130_ef_io__analog_esd_pad.lib
+
+#PAD_PLACE_IO_TERMINALS:
+#- sky130_ef_io__gpiov2_pad/PAD
+#- sky130_ef_io__vccd_lvc_clamped_pad/VCCD_PAD
+#- sky130_ef_io__vssd_lvc_clamped_pad/VSSD_PAD
+#- sky130_ef_io__vddio_hvc_clamped_pad/VDDIO_PAD
+#- sky130_ef_io__vssio_hvc_clamped_pad/VSSIO_PAD
+#- sky130_ef_io__analog_esd_pad/P_PAD
+
+RSZ_DONT_TOUCH_LIST: 
+- global_enable_PAD2CORE

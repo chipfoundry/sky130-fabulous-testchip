@@ -78,3 +78,15 @@ if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL
     set_propagated_clock [all_clocks]
 }
 
+# False paths
+set_false_path -setup -hold -through [get_ports {spi_mode_PAD}]
+
+set_false_path -setup -hold -through [get_ports {spi_sclk_PAD}]
+set_false_path -setup -hold -through [get_ports {spi_cs_n_PAD}]
+set_false_path -setup -hold -through [get_ports {spi_mosi_PAD}]
+set_false_path -setup -hold -through [get_ports {spi_miso_PAD}]
+
+set_false_path -setup -hold -through [get_ports {fpga_select_PAD[0]}]
+set_false_path -setup -hold -through [get_ports {fpga_select_PAD[1]}]
+
+set_false_path -setup -hold -through [get_ports {bidir_PAD[*]}]

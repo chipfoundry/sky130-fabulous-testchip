@@ -6,7 +6,7 @@
 module chip_core #(
     parameter NUM_BIDIR_PADS
     )(
-    input  logic clk_i,       // clock
+    input  logic clk_i,      // clock
     input  logic rst_ni,     // reset (active low)
     
     // SPI mode
@@ -36,23 +36,37 @@ module chip_core #(
     output logic config_done_o,
     
     // FPGA I/Os
-    
     input  wire [NUM_BIDIR_PADS-1 :0] bidir_in,   // Input value
     output wire [NUM_BIDIR_PADS-1 :0] bidir_out,  // Output value
     output wire [NUM_BIDIR_PADS-1 :0] bidir_oe    // Output enable
 );
 
-    // TODO sync spi_mode_i
-    // TODO sync fpga_select_i
-    // TODO sync SPI!
-    
+    // Synchronizers
+
     logic spi_mode_sync;
-    assign spi_mode_sync = spi_mode_i;
+    synchronizer synchronizer_spi_mode (
+        .clk_i  (clk_i),
+        .in_i   (spi_mode_i),
+        .out_o  (spi_mode_sync)
+    );
 
     logic [1:0] fpga_select_sync;
-    assign fpga_select_sync = fpga_select_i;
+    synchronizer #(
+        .BITS (2)
+    ) synchronizer_fpga_select (
+        .clk_i  (clk_i),
+        .in_i   (fpga_select_i),
+        .out_o  (fpga_select_sync)
+    );
 
-    // -----------------
+    logic spi_sclk_sync, spi_cs_n_sync, spi_mosi_sync, spi_miso_sync;
+    synchronizer #(
+        .BITS (4)
+    ) synchronizer_spi (
+        .clk_i  (clk_i),
+        .in_i   ({spi_sclk_i, spi_cs_n_i, spi_mosi_i, spi_miso_i}),
+        .out_o  ({spi_sclk_sync, spi_cs_n_sync, spi_mosi_sync, spi_miso_sync})
+    );
 
     // Reset with asynchronous assert and synchronous release
     logic [1:0] rst_nd;
@@ -68,9 +82,6 @@ module chip_core #(
     end
     
     assign rst_n_sync = rst_nd[1];
-    
-    // -----------------
-    
     
     // At startup, trigger configuration
     // when fpga_mode_sync == 1'b0
@@ -153,7 +164,7 @@ module chip_core #(
                 spi_sclk_o = spi_controller_sclk_o;
                 spi_cs_n_o = spi_controller_cs_no;
                 spi_mosi_o = spi_controller_mosi_o;
-                spi_controller_miso_i = spi_miso_i;
+                spi_controller_miso_i = spi_miso_sync;
                 
                 // Re-route bitstream
                 spi_bitstream_data  = spi_controller_bitstream_data_o;
@@ -165,9 +176,9 @@ module chip_core #(
                 spi_mosi_en_o = 1'b0;
                 spi_miso_en_o = 1'b1;
                 
-                spi_receiver_sclk_i = spi_sclk_i;
-                spi_receiver_cs_ni  = spi_cs_n_i;
-                spi_receiver_mosi_i = spi_mosi_i;
+                spi_receiver_sclk_i = spi_sclk_sync;
+                spi_receiver_cs_ni  = spi_cs_n_sync;
+                spi_receiver_mosi_i = spi_mosi_sync;
                 spi_miso_o = spi_receiver_miso_o;
                 
                 // Re-route bitstream
@@ -195,8 +206,6 @@ module chip_core #(
         .miso_o     (spi_receiver_miso_o)
     );
 
-    logic fabric_spi_controller_busy; // TODO
-
     fabric_spi_controller #(
         // Use bitstream length of large fabric
         .BITSTREAM_LENGTH_WORDS (32'h119A),
@@ -215,7 +224,7 @@ module chip_core #(
         .bitstream_valid_o   (spi_controller_bitstream_valid_o),
         
         // Reading in progress
-        .busy_o     (fabric_spi_controller_busy),
+        .busy_o     ( ),
         
         // SPI
         .sclk_o     (spi_controller_sclk_o),

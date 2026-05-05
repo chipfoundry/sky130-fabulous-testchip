@@ -5,7 +5,7 @@ VERSION 5.7 ;
 MACRO project_id_textblock
   CLASS BLOCK ;
   FOREIGN project_id_textblock ;
-  ORIGIN 0.000 0.000 ;
+  ORIGIN 3.280 10.800 ;
   SIZE 173.750 BY 51.720 ;
   OBS
       LAYER li1 ;

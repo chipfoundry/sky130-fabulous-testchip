@@ -23,7 +23,8 @@ module chip_top_tb;
     wire [ 1:0]  fpga_select_PAD;
     
     wire         config_busy_PAD;
-    wire         config_done_PAD;
+    
+    wire         global_enable_PAD;
 
     wire [35:0]  bidir_PAD;
     
@@ -113,7 +114,8 @@ module chip_top_tb;
       .fpga_select_PAD,
 
       .config_busy_PAD,
-      .config_done_PAD,
+
+      .global_enable_PAD,
 
       .bidir_PAD ({bidir_PAD_35, bidir_PAD_34, bidir_PAD_33, bidir_PAD_32, bidir_PAD_31, bidir_PAD_30, bidir_PAD_29, bidir_PAD_28, bidir_PAD_27, bidir_PAD_26, bidir_PAD_25, bidir_PAD_24, bidir_PAD_23, bidir_PAD_22, bidir_PAD_21, bidir_PAD_20, bidir_PAD_19, bidir_PAD_18, bidir_PAD_17, bidir_PAD_16, bidir_PAD_15, bidir_PAD_14, bidir_PAD_13, bidir_PAD_12, bidir_PAD_11, bidir_PAD_10, bidir_PAD_9, bidir_PAD_8, bidir_PAD_7, bidir_PAD_6, bidir_PAD_5, bidir_PAD_4, bidir_PAD_3, bidir_PAD_2, bidir_PAD_1, bidir_PAD_0})
   );
