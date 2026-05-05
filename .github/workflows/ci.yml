@@ -169,6 +169,10 @@ jobs:
           key: cache-fabric-classic_fabric_chipfoundry_large-${{ env.pdk }}-${{ env.TILE_LIBRARY_SHORT_HASH }}
           fail-on-cache-miss: true
 
+      - name: Clone the PDK
+        run: |
+          PDK=${{ env.pdk }} nix develop --command make clone-pdk
+
       - name: Set Fabric
         run: |
           echo "fabric=classic_fabric_chipfoundry_large" >> $GITHUB_ENV
