@@ -68,17 +68,16 @@ PAD_CFG: dir::pad_cfg.tcl
 # Specify the pad instances for the padring
 PAD_SOUTH: [
     # 11 pads
-
     "vddio_pads\\[0\\].vddio_pad",
     "vssio_pads\\[0\\].vssio_pad",
 
-    "bidirs\\[32\\].bidir_pad",
-    "bidirs\\[31\\].bidir_pad",
-    "bidirs\\[30\\].bidir_pad",
-    "bidirs\\[29\\].bidir_pad",
-    "bidirs\\[28\\].bidir_pad",
-    "bidirs\\[27\\].bidir_pad",
-    "bidirs\\[26\\].bidir_pad",
+    "bidirs\\[6\\].bidir_pad",
+    "bidirs\\[7\\].bidir_pad",
+    "bidirs\\[8\\].bidir_pad",
+    "bidirs\\[9\\].bidir_pad",
+    "bidirs\\[10\\].bidir_pad",
+    "bidirs\\[11\\].bidir_pad",
+    "bidirs\\[12\\].bidir_pad",
 
     "vddio_pads\\[1\\].vddio_pad",
     "vssio_pads\\[1\\].vssio_pad"
@@ -89,23 +88,22 @@ PAD_EAST: [
     "vccd_pads\\[0\\].vccd_pad",
     "vssd_pads\\[0\\].vssd_pad",
 
-    "bidirs\\[25\\].bidir_pad",
-    "bidirs\\[24\\].bidir_pad",
-    "bidirs\\[23\\].bidir_pad",
+    "bidirs\\[13\\].bidir_pad",
+    "bidirs\\[14\\].bidir_pad",
+    "bidirs\\[15\\].bidir_pad",
+    "bidirs\\[16\\].bidir_pad",
+    "bidirs\\[17\\].bidir_pad",
+    "bidirs\\[18\\].bidir_pad",
+    "bidirs\\[19\\].bidir_pad",
+    "bidirs\\[20\\].bidir_pad",
+    "bidirs\\[21\\].bidir_pad",
     "bidirs\\[22\\].bidir_pad",
-    
-    "bidirs\\[0\\].bidir_pad",
-    "bidirs\\[1\\].bidir_pad",
-    "bidirs\\[2\\].bidir_pad",
-    "bidirs\\[3\\].bidir_pad",
-    "bidirs\\[4\\].bidir_pad",
-    "bidirs\\[5\\].bidir_pad",
-    "bidirs\\[6\\].bidir_pad",
-    "bidirs\\[7\\].bidir_pad",
-    "bidirs\\[8\\].bidir_pad",
-    "bidirs\\[9\\].bidir_pad",
-    "bidirs\\[10\\].bidir_pad",
-    "bidirs\\[11\\].bidir_pad",
+    "bidirs\\[23\\].bidir_pad",
+    "bidirs\\[24\\].bidir_pad",
+    "bidirs\\[25\\].bidir_pad",
+    "bidirs\\[26\\].bidir_pad",
+    "bidirs\\[27\\].bidir_pad",
+    "bidirs\\[28\\].bidir_pad",
     
     "vccd_pads\\[1\\].vccd_pad",
     "vssd_pads\\[1\\].vssd_pad"
@@ -116,13 +114,13 @@ PAD_NORTH: [
     "vddio_pads\\[3\\].vddio_pad",
     "vssio_pads\\[3\\].vssio_pad",
 
-    "bidirs\\[18\\].bidir_pad",
-    "bidirs\\[17\\].bidir_pad",
-    "bidirs\\[16\\].bidir_pad",
-    "bidirs\\[15\\].bidir_pad",
-    "bidirs\\[14\\].bidir_pad",
-    "bidirs\\[13\\].bidir_pad",
-    "bidirs\\[12\\].bidir_pad",
+    "bidirs\\[35\\].bidir_pad",
+    "bidirs\\[34\\].bidir_pad",
+    "bidirs\\[33\\].bidir_pad",
+    "bidirs\\[32\\].bidir_pad",
+    "bidirs\\[31\\].bidir_pad",
+    "bidirs\\[30\\].bidir_pad",
+    "bidirs\\[29\\].bidir_pad",
 
     "vddio_pads\\[2\\].vddio_pad",
     "vssio_pads\\[2\\].vssio_pad"
@@ -133,13 +131,13 @@ PAD_WEST: [
     "vccd_pads\\[3\\].vccd_pad",
     "vssd_pads\\[3\\].vssd_pad",
 
-    "bidirs\\[35\\].bidir_pad",
-    "bidirs\\[34\\].bidir_pad",
-    "bidirs\\[33\\].bidir_pad",
+    "bidirs\\[5\\].bidir_pad",
+    "bidirs\\[4\\].bidir_pad",
+    "bidirs\\[3\\].bidir_pad",
 
-    "bidirs\\[21\\].bidir_pad",
-    "bidirs\\[20\\].bidir_pad",
-    "bidirs\\[19\\].bidir_pad",
+    "bidirs\\[2\\].bidir_pad",
+    "bidirs\\[1\\].bidir_pad",
+    "bidirs\\[0\\].bidir_pad",
 
     spi_mode_pad,
 
@@ -151,8 +149,8 @@ PAD_WEST: [
     clock_pad,
     reset_pad,
     
-    "fpga_selects\\[0\\].fpga_select_pad",
     "fpga_selects\\[1\\].fpga_select_pad",
+    "fpga_selects\\[0\\].fpga_select_pad",
   
     config_busy_pad,
 
