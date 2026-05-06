@@ -75,7 +75,7 @@ module fabric_config #(
     assign busy_o = curr_state != S_IDLE;
 
     // State transition
-    always_ff @(posedge clk_i) begin
+    always_ff @(posedge clk_i, negedge rst_ni) begin
         if (!rst_ni) begin
             curr_state <= S_IDLE;
         end else begin
@@ -83,7 +83,7 @@ module fabric_config #(
         end
     end
     
-    always_ff @(posedge clk_i) begin
+    always_ff @(posedge clk_i, negedge rst_ni) begin
         if (!rst_ni) begin
             configured_o <= '0;
         end else begin
@@ -95,7 +95,7 @@ module fabric_config #(
     end
     
     
-    always_ff @(posedge clk_i) begin
+    always_ff @(posedge clk_i, negedge rst_ni) begin
         if (!rst_ni) begin
             column_select <= '0;
             frame_select  <= '0;
@@ -116,8 +116,9 @@ module fabric_config #(
                     if (bitstream_valid_i && !bitstream_data_i[DESYNC_FLAG]) begin
                         // Select frame and column
                         frame_select <= bitstream_data_i[MAX_FRAMES_PER_COL-1:0];
+                        /* verilator lint_off WIDTHTRUNC */
                         column_select <= bitstream_data_i[FRAME_BITS_PER_ROW-1:FRAME_BITS_PER_ROW-FRAME_SELECT_WIDTH];
-                        
+                        /* verilator lint_on WIDTHTRUNC */
                         // Set row_select to maximum + 1
                         row_select <= FABRIC_NUM_ROWS-1;
                     end
