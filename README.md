@@ -45,6 +45,7 @@ The chip will be packaged using ChipFoundry's QFN service:
 | 22-28 | fpga_io[12:6]  | FPGA I/O                                      |
 | 33-48 | fpga_io[28:13] | FPGA I/O                                      |
 | 53-59 | fpga_io[35:29] | FPGA I/O                                      |
+| 64    | enable         | Enable signal for the I/Os. Must use I/O domain and should be kept low during startup. |
 | 18, 31, 49, 63 | vccd           | Core Power (1.8V)                    |
 | 17, 32, 50, 62 | vssd           | Core Ground                          |
 | 20, 29, 52, 61 | vddio          | I/O Power (3.3V - 5.0V)              |
