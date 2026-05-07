@@ -51,11 +51,9 @@ The chip will be packaged using ChipFoundry's QFN service:
 | 20, 29, 52, 61 | vddio          | I/O Power (3.3V - 5.0V)              |
 | 21, 30, 51, 60 | vssio          | I/O Ground                           |
 
-
 > [!NOTE]
-> To build the chip, enable the following PDK version using ciel: d815bb30c9afdf9e264c276a8a2b533108dea3d0
-> In addition the following LibreLane branch must be used: `nix shell github:librelane/librelane/dev`
-
+> To build the chip, enable the following PDK version using ciel: 1e931c9417df0478df9ee6b7289202f3e87440ab
+> In addition, the LibreLane dev branch must be used: `nix shell github:librelane/librelane/dev`
 
 This repository contains a collection of fabrics using the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
 

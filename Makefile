@@ -1,5 +1,6 @@
 PDK ?= sky130A
-PDK_COMMIT ?= d815bb30c9afdf9e264c276a8a2b533108dea3d0
+PDK_ROOT ?= ~/.ciel
+PDK_COMMIT ?= 1e931c9417df0478df9ee6b7289202f3e87440ab
 
 # Get the fabric names
 FABRICS :=  $(patsubst fabrics/%,%,$(wildcard fabrics/*)) 
@@ -30,9 +31,9 @@ $(FABRICS_COPY):
 	cp fabrics/$(subst -copy,,$@)/constraints.pcf user_designs/fabrics/$(subst -copy,,$@)/constraints.pcf
 .PHONY: $(FABRICS_COPY)
 
-clone-pdk:
+enable-pdk:
 	ciel enable $(PDK_COMMIT) --pdk-family $(PDK)
-.PHONY: clone-pdk
+.PHONY: enable-pdk
 
 librelane:
 	librelane --pdk-root ${PDK_ROOT} --pdk ${PDK} --manual-pdk librelane/config.yaml --save-views-to final/
