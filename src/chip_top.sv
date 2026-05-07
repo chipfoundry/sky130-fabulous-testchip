@@ -138,22 +138,6 @@ module chip_top #(
         .P_PAD       (global_enable_PAD),
         .P_CORE      (global_enable_PAD2CORE)
     );
-    
-    // Add antenna diodes to global_enable_PAD2CORE
-    generate
-    for (genvar i=0; i<NUM_BIDIR_PADS+10; i++) begin : antenna_diodes
-        (* keep *)
-        sky130_fd_sc_hd__diode_2 antenna_diode (
-            `ifdef USE_POWER_PINS
-            .VPWR   (VCCD),
-            .VGND   (VSSD),
-            .VPB    (VCCD),
-            .VNB    (VSSD),
-            `endif
-            .DIODE  (global_enable_PAD2CORE)
-        );
-    end
-    endgenerate
 
     // Power/ground pad instances
     generate

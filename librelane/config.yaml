@@ -39,6 +39,8 @@ meta:
     # Because of hierarchy
     Checker.YosysUnmappedCells: null
 
+    +OpenROAD.GlobalRouting: Odb.InsertECODiodes
+
 DESIGN_NAME: chip_top
 VERILOG_FILES:
 - dir::../src/chip_top.sv
@@ -388,19 +390,54 @@ HOLD_VIOLATION_CORNERS:
 - max_ss_100C_1v60
 #- max_ff_n40C_1v95
 
-#EXTRA_GDS:
-#- pdk_dir::libs.ref/sky130_fd_io/gds/sky130_ef_io__analog.gds
-
-EXTRA_LIBS:
-- dir::sky130_ef_io__analog_esd_pad.lib
-
-#PAD_PLACE_IO_TERMINALS:
-#- sky130_ef_io__gpiov2_pad/PAD
-#- sky130_ef_io__vccd_lvc_clamped_pad/VCCD_PAD
-#- sky130_ef_io__vssd_lvc_clamped_pad/VSSD_PAD
-#- sky130_ef_io__vddio_hvc_clamped_pad/VDDIO_PAD
-#- sky130_ef_io__vssio_hvc_clamped_pad/VSSIO_PAD
-#- sky130_ef_io__analog_esd_pad/P_PAD
-
 RSZ_DONT_TOUCH_LIST: 
 - global_enable_PAD2CORE
+
+# Add antenna diodes to the ENABLE_H inputs
+INSERT_ECO_DIODES:
+- target: spi_mode_pad/ENABLE_H
+- target: spi_sclk_pad/ENABLE_H
+- target: spi_cs_n_pad/ENABLE_H
+- target: spi_mosi_pad/ENABLE_H
+- target: spi_miso_pad/ENABLE_H
+- target: clock_pad/ENABLE_H
+- target: reset_pad/ENABLE_H
+- target: "fpga_selects[1].fpga_select_pad/ENABLE_H"
+- target: "fpga_selects[0].fpga_select_pad/ENABLE_H"
+- target: config_busy_pad/ENABLE_H
+- target: "bidirs[0].bidir_pad/ENABLE_H"
+- target: "bidirs[1].bidir_pad/ENABLE_H"
+- target: "bidirs[2].bidir_pad/ENABLE_H"
+- target: "bidirs[3].bidir_pad/ENABLE_H"
+- target: "bidirs[4].bidir_pad/ENABLE_H"
+- target: "bidirs[5].bidir_pad/ENABLE_H"
+- target: "bidirs[6].bidir_pad/ENABLE_H"
+- target: "bidirs[7].bidir_pad/ENABLE_H"
+- target: "bidirs[8].bidir_pad/ENABLE_H"
+- target: "bidirs[9].bidir_pad/ENABLE_H"
+- target: "bidirs[10].bidir_pad/ENABLE_H"
+- target: "bidirs[11].bidir_pad/ENABLE_H"
+- target: "bidirs[12].bidir_pad/ENABLE_H"
+- target: "bidirs[13].bidir_pad/ENABLE_H"
+- target: "bidirs[14].bidir_pad/ENABLE_H"
+- target: "bidirs[15].bidir_pad/ENABLE_H"
+- target: "bidirs[16].bidir_pad/ENABLE_H"
+- target: "bidirs[17].bidir_pad/ENABLE_H"
+- target: "bidirs[18].bidir_pad/ENABLE_H"
+- target: "bidirs[19].bidir_pad/ENABLE_H"
+- target: "bidirs[20].bidir_pad/ENABLE_H"
+- target: "bidirs[21].bidir_pad/ENABLE_H"
+- target: "bidirs[22].bidir_pad/ENABLE_H"
+- target: "bidirs[23].bidir_pad/ENABLE_H"
+- target: "bidirs[24].bidir_pad/ENABLE_H"
+- target: "bidirs[25].bidir_pad/ENABLE_H"
+- target: "bidirs[26].bidir_pad/ENABLE_H"
+- target: "bidirs[27].bidir_pad/ENABLE_H"
+- target: "bidirs[28].bidir_pad/ENABLE_H"
+- target: "bidirs[29].bidir_pad/ENABLE_H"
+- target: "bidirs[30].bidir_pad/ENABLE_H"
+- target: "bidirs[31].bidir_pad/ENABLE_H"
+- target: "bidirs[32].bidir_pad/ENABLE_H"
+- target: "bidirs[33].bidir_pad/ENABLE_H"
+- target: "bidirs[34].bidir_pad/ENABLE_H"
+- target: "bidirs[35].bidir_pad/ENABLE_H"
