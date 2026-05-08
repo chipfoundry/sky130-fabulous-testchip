@@ -1,4 +1,5 @@
 PDK ?= sky130A
+#PDK ?= ihp-sg13g2
 
 # Get the fabric names
 FABRICS :=  $(patsubst fabrics/%,%,$(wildcard fabrics/*)) 

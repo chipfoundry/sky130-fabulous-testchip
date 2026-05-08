@@ -91,7 +91,7 @@
         let
           pkgs = self.legacyPackages."${system}";
           callPackage = lib.callPackageWith pkgs;
-          python-env = (pkgs.python3.withPackages (ps: with ps; [ pkgs.python3.pkgs.fasm ]));
+          python-env = (pkgs.python3.withPackages (ps: with ps; [ fasm pyyaml ]));
         in
         {
           default = pkgs.mkShell {

@@ -13,7 +13,7 @@ module counter (
 
     wire clk1_buf;
 
-    (* keep, BEL="X0Y4.A" *) GBUF clock_buf (
+    (* keep *) GBUF clock_buf (
       .IN   (clk1),
       .OUT  (clk1_buf)
     );

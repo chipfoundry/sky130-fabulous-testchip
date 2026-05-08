@@ -3,22 +3,27 @@ PDK 			?= sky130A
 FABRIC 			?= classic_fabric_chipfoundry_large
 TILE_LIBRARY		?= classic
 FABULOUS_ROOT 		?= $(abspath ../../../../fabrics/$(FABRIC)/macro/$(PDK)/fabulous)
-PCF_CONSTRAINTS 		?= $(abspath $(FABULOUS_ROOT)/../../../constraints.pcf)
+#PCF_CONSTRAINTS 		?= $(abspath $(FABULOUS_ROOT)/../../../constraints.pcf)
+PCF_CONSTRAINTS 		 = $(abspath ./generated_constraints.pcf)
+FABRIC_CSV              ?= $(abspath ../../../../fabrics/$(FABRIC)/$(FABRIC).csv)
+PCF_GEN_SCRIPT          ?= $(abspath ../../../scripts/generate_pcf.py)
 TOP 			?= top_wrapper
 
 # Available flip-flops and init value
-FFS                     ?= -ff "\$$_DFF_P_" x \
-			   -ff "\$$_DFFE_PP_" x \
-			   -ff "\$$_SDFF_PP?_" x \
-			   -ff "\$$_SDFFE_PP?P_" x \
-			   -ff "\$$_DLATCH_?_" x
+# NOTE: -ff option syntax appears problematic in current yosys version.
+# Leaving empty - synth_fabulous works without explicit FF specification.
+FFS                     ?= -ff \$$_DFF_P_ x \
+			   -ff \$$_DFFE_PP_ x \
+			   -ff \$$_SDFF_PP?_ x \
+			   -ff \$$_SDFFE_PP?P_ x \
+			   -ff \$$_DLATCH_?_ x
 
 $(info $(PDK))
 $(info $(FABRIC))
 $(info $(TILE_LIBRARY))
 
 ifeq ($(TILE_LIBRARY),classic)
-MULTIPLIER_MAP_PATH 	 = -multiplier-map ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/techmap/MACC_8x8_20_map.v
+# MULTIPLIER_MAP_PATH 	 = -multiplier-map ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/techmap/MACC_8x8_20_map.v
 endif
 
 EXTRA_PLIBS_PATH 	 = -extra-plib ../../../../ip/fabulous-tiles/primitives/FABULOUS_LC/yosys/primitives/prims.v \
@@ -44,14 +49,21 @@ EXTRA_MAPS_PATH		+= -extra-map ../../../../ip/fabulous-tiles/primitives/RAM_32x4
 endif
 
 ifeq ($(TILE_LIBRARY),classic)
-EXTRA_MLIBMAPS_PATH	 = -extra-mlibmap ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/memlib/RAM_32x4_2R_1W_lib.txt
+#EXTRA_MLIBMAPS_PATH	 = -extra-mlibmap ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/memlib/RAM_32x4_2R_1W_lib.txt
 endif
 
 
 BIT_GEN 			?= ../../../scripts/bit_gen.py
 BIT_TO_HEX 		?= ../../../scripts/bit_to_hex.py
 
-all: synth pnr bitstream hex
+all: synth generate-pcf pnr bitstream hex
+
+generate-pcf: $(PCF_CONSTRAINTS)
+
+$(PCF_CONSTRAINTS): $(FABRIC_CSV) $(TOP).json
+	@python3 $(PCF_GEN_SCRIPT) $(FABRIC_CSV) $(TOP).json $(PCF_CONSTRAINTS)
+	@echo "Generated $(PCF_CONSTRAINTS)"
+
 
 synth:
 	yosys \
@@ -62,27 +74,25 @@ synth:
 	-carry ha \
 	-complex-dff \
 	$(FFS) \
-	$(MULTIPLIER_MAP_PATH) \
 	$(EXTRA_PLIBS_PATH) \
-	$(EXTRA_MAPS_PATH) \
-	$(EXTRA_MLIBMAPS_PATH); \
+	$(EXTRA_MAPS_PATH); \
 	show -format dot -prefix $(TOP); \
 	write_json -noscopeinfo $(TOP).json; \
 	" \
 	$(RTL)
 .PHONY: synth
 
-pnr:
+pnr: $(PCF_CONSTRAINTS) $(TOP).json
 	FAB_ROOT=$(FABULOUS_ROOT) \
 	nextpnr-generic \
 	--uarch fabulous \
 	--json $(TOP).json \
 	--write $(TOP)_out.json \
 	-o fasm=$(TOP).fasm \
+	-o pcf=$(PCF_CONSTRAINTS) \
 	--verbose \
 	--log $(TOP)_log.txt \
-	--timing-allow-fail \
-	-o pcf=$(PCF_CONSTRAINTS)
+	--timing-allow-fail
 .PHONY: pnr
 
 bitstream:

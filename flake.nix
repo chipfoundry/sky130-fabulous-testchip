@@ -72,6 +72,9 @@
               iverilog
               verilator
 
+              # PnR
+              nextpnr
+
               # Waveform viewing
               gtkwave
               surfer
@@ -81,6 +84,7 @@
               cocotb
               cocotbext-spi
               pytest
+              pyyaml
             ];
           });
         }
