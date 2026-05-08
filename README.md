@@ -1,110 +1,141 @@
-# sky130 FABulous Test Chip
+# Multi-Fabric FPGA Build System
 
-A test chip with three FABulous FPGA fabrics.
+A comprehensive, end-to-end walkthrough for the `sky130-fabulous-testchip` ecosystem. It covers everything from generating individual logic tiles to validating complex user designs across multiple fabric sizes.
 
-<p align="center">
-  <a href="img/chip_top.png">
-    <img src="img/chip_top.png" alt="chip layout" width=35%>
-  </a>
-</p>
+---
 
-> [!NOTE]
-> To build the chip, enable the following PDK version using ciel: d815bb30c9afdf9e264c276a8a2b533108dea3d0
-> In addition the following LibreLane branch must be used: `nix shell github:librelane/librelane/leo/padring-orientation`
+## 1. System Overview
 
+The FABulous FPGA flow is divided into three distinct layers:
 
-This repository contains a collection of fabrics using the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
+1.  **Layer 1: IP Generation (Tiles)**: Physical implementation of individual FPGA components (LUTs, Switch Matrices, IO blocks) using OpenLane/OpenROAD.
+2.  **Layer 2: Fabric Construction**: Assembling tiles into a grid to create a complete FPGA fabric (Small, Medium, or Large).
+3.  **Layer 3: User Design Validation**: Compiling Verilog designs onto the generated fabric to verify functionality, timing, and routing.
 
-The fabrics can be found under `fabrics/`. Current fabrics include:
+---
 
-- classic_fabric_chipfoundry_small
-- classic_fabric_chipfoundry_medium
-- classic_fabric_chipfoundry_large
+## 2. Environment Setup (CRITICAL)
 
-The prefix describes the tile library that is used, in this case `classic`.
+This repository uses **Nix** to ensure toolchain consistency. You **must** be inside the Nix environment for any build command to work.
 
-The fabrics can be implemented with LibreLane using the FABulous plugin for LibreLane: [librelane_plugin_fabulous](https://github.com/mole99/librelane_plugin_fabulous).
-See below for more information about stitching the fabric. 
+### Entering the Shell
+From the root of the repository:
+```bash
+# Set NIX_PATH if you encounter hostname errors
+export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz
 
-A Continuous Integration (CI) setup implements the fabrics for the sky130A PDK.
-
-## Requirements
-
-> [!NOTE]
-> Make sure to clone the repository with submodules!
->
->```console
->git clone --recurse-submodules <url>.git
->```
-> or initialize the submodules after cloning:
->
->```console
-> git submodule update --init --recursive
->```
-
-For information on installing Nix with the FOSSi Foundation cache, please refer to the LibreLane documentation: https://librelane.readthedocs.io/en/stable/installation/nix_installation/index.html
-
-## Stitch the Fabrics
-
-As a prerequisite make sure that the tiles for the tile library that you are using have been implemented in `ip/fabulous-tiles`.
-If that is the case, you can proceed by enabling a Nix shell with LibreLane in this repository:
-
-```
+# Enter the shell
 nix-shell
 ```
 
-To implement all fabrics, run:
+### Verified Tools
+- **Yosys 0.62+**: For synthesis.
+- **NextPNR-Generic**: For place and route (with FABulous 2.0 support).
+- **OpenLane 2 / OpenROAD**: For tile hardening.
+- **Python 3.13+**: With `pyyaml` and `fasm` libraries.
 
-```
-make all
-```
+---
 
-To implement a single fabric, run:
+## 3. Stage 1: IP & Tile Generation
 
-```
-make classic_fabric_chipfoundry_large
-```
+Before a fabric can be built, the individual tiles must be hardened (GDS generation).
 
-After a fabrics has been implemented you can view it either in OpenROAD or KLayout by appending `-openroad` or `-klayout` to the fabric name.
-For example, to view `classic_fabric_chipfoundry_large` in OpenROAD, run: `make classic_fabric_chipfoundry_large-openroad`.
+### Building Logic Tiles
+Tiles are managed in `ip/fabulous-tiles`. You can build all tiles or specific ones.
 
-## Implement User Designs
-
-Please see the README in `user_designs/` on how to implement a user design for the fabrics.
-
-## Simulate the Fabric
-
-After you have generated the bitstreams for the user designs you can simulate the fabric.
-You will again need the Nix shell from the root of this repository.
-
-Again, use `PDK`, `FABRIC` and `TILE_LIBRARY` accordingly.
-
-There are two ways to simulate the fabric:
-
-#### RTL "Emulation"
-
-In this case, "emulation" means that we simulate the fabric, however, without uploading the bitstream.
-The configuration bits of the fabric are already initialized with the user design bitstream.
-This has the benefit that simulation is much faster: no need to upload the bitstream and the Verilog simulator can prune dead branches. However, the disadvantage is that only a single user design can be run per simulation.
-
-To emulate a user design, simply set EMULATE to its name:
-
-```
-export EMULATE=counter
+**Build all tiles for Sky130:**
+```bash
+cd ip/fabulous-tiles
+PDK=sky130A TILE_LIBRARY=classic make all
 ```
 
-Then, run the simulation using cocotb:
-
-```
-cd tb; python3 fabric_tb.py
-```
-
-#### RTL Simulation
-
-To start the RTL simulation, simply run cocotb:
-
-```
-cd tb; python3 fabric_tb.py
+**Build a specific tile (e.g., W_TT_IF2):**
+```bash
+PDK=sky130A TILE_LIBRARY=classic python3 tiles.py W_TT_IF2
 ```
 
-And it will run all available test cases for the selected fabric and tile library.
+### Verification (DRC/LVS)
+The tile generation flow automatically runs a full manufacturability report at the end (Stage 71).
+- ✅ **Antenna**: Checks for charge accumulation during manufacturing.
+- ✅ **LVS (Layout vs Schematic)**: Ensures the physical gates match the Verilog netlist.
+- ✅ **DRC (Design Rule Check)**: Ensures the layout follows Sky130 manufacturing rules.
+
+**Viewing results:**
+Logs and reports are saved in `ip/fabulous-tiles/tiles/classic/<TILE_NAME>/runs/RUN_<DATE>/`.
+
+---
+
+## 4. Stage 2: Fabric Construction
+
+A "Fabric" is a grid of tiles defined by a CSV file.
+
+### Fabric Definitions
+- **Small**: `fabrics/classic_fabric_chipfoundry_small/`
+- **Medium**: `fabrics/classic_fabric_chipfoundry_medium/`
+- **Large**: `fabrics/classic_fabric_chipfoundry_large/`
+
+Each directory contains a `.csv` file defining the tile grid. The build system uses these CSVs to determine where I/O pins and logic blocks are located.
+
+---
+
+## 5. Stage 3: User Design Validation
+
+This is where you test your RTL designs on the FPGA.
+
+### Step 1: Manual Design Build
+Navigate to a specific design and specify the target fabric.
+
+```bash
+cd user_designs/designs/classic/counter
+FABRIC=classic_fabric_chipfoundry_small make clean all
+```
+
+### Step 2: The Intelligent PCF System
+Our system features an **Auto-Discovery PCF Generator**. You no longer need to manually write pin constraints.
+1.  **Discovery**: It reads your synthesized `.json` to find ports (e.g., `clk`, `a[7:0]`).
+2.  **Extraction**: It reads the Fabric CSV to find available IO pads.
+3.  **Mapping**: It generates `generated_constraints.pcf` automatically.
+
+### Step 3: Running the Full Test Suite
+To verify all 12 designs across all 3 fabrics (36 combinations):
+
+```bash
+cd user_designs
+./test_all_fabrics.sh
+```
+
+**Understanding the Matrix Output:**
+- **PASS (P)**: Fully built and routed.
+- **SKIP (S)**: Skipped because the design needs more I/O pins than the fabric provides (e.g., 28 pins needed, 24 available).
+- **FAIL (F)**: Build failed or timed out.
+- **TIMEOUT**: Design is too complex to route on that fabric without hard macros (e.g., `register_file`).
+
+---
+
+## 6. Advanced Debugging
+
+### Viewing Detailed Build Logs
+If a design fails in the automated suite, you can inspect the full log:
+`user_designs/designs/classic/<DESIGN>/build_log.txt`
+
+### Common Failure: IHP SRAM
+The `ihp_sram_1024x32_1rw` design will fail unless you have the IHP PDK libraries. It instantiates a black-box memory block that the generic Sky130 flow cannot synthesize.
+
+### Tuning the Build
+You can adjust the timeout in `test_all_fabrics.sh` if you have a slow machine or extremely complex designs:
+```bash
+# Change to 5 minutes for massive designs
+FABRIC="$fabric" TILE_LIBRARY="$TILE_LIBRARY" timeout 300s make clean all ...
+```
+
+---
+
+## 7. Adding New Content
+
+- **New Design**: Add a folder in `user_designs/designs/classic/`. Copy the `Makefile` from `counter`.
+- **New Tile**: Add the tile logic to `ip/fabulous-tiles/tiles/` and update `tiles.py`.
+- **New Fabric**: Create a new folder in `fabrics/` with a grid CSV.
+
+---
+
+*Ensure all toolchains are updated via the provided Nix configurations.*
