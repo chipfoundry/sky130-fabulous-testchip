@@ -142,7 +142,7 @@ def generate_pcf(fabric_csv, output_pcf, design_json=None):
                 else:
                     print(f"Warning: Not enough pins for {sig}")
     
-    # Always include indexed all[N] mapping for compatibility (if not already used)
+    # Always include indexed io[N] mapping for compatibility (if not already used)
     pcf_lines.append("\n# Indexed I/O assignments (fallback/generic)")
     existing_ios = set()
     if design_json:
@@ -154,7 +154,7 @@ def generate_pcf(fabric_csv, output_pcf, design_json=None):
                 existing_ios.add(m.group(1))
 
     for i, (x, y, p) in enumerate(io_list):
-        sig_name = f"all[{i}]"
+        sig_name = f"io[{i}]"
         if sig_name not in existing_ios:
             pcf_lines.append(f"set_io {sig_name} X{x}Y{y}/{p}")
 
