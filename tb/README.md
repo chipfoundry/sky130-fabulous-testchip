@@ -35,16 +35,16 @@ python3 fabric_tb.py
 
 | Testcase | Status | Notes |
 | :--- | :--- | :--- |
-| `all_ones` | ✅ PASS | Verified with dynamic PCF mapping |
-| `all_zeros` | ✅ PASS | |
-| `passthrough` | ✅ PASS | |
-| `addition` | ✅ PASS | |
-| `counter` | ✅ PASS | |
-| `multiplication`| ✅ PASS | |
-| `macc_8x8_20` | ✅ PASS | |
-| `ram_32x4_2r_1w`| ✅ PASS | |
-| `sys_reset` | ✅ PASS | |
-| `register_file` | ❌ FAIL | Missing BRAM/RegFile Hard Macros in logic-only fabric |
+| `all_ones` | PASS | Verified with dynamic PCF mapping |
+| `all_zeros` | PASS | |
+| `passthrough` | PASS | |
+| `addition` | PASS | |
+| `counter` | PASS | |
+| `multiplication`| PASS | |
+| `macc_8x8_20` | PASS | |
+| `ram_32x4_2r_1w`| PASS | |
+| `sys_reset` | PASS | |
+| `register_file` | FAIL | Missing BRAM/RegFile Hard Macros in logic-only fabric |
 
 ## 3. Technical Findings
 
