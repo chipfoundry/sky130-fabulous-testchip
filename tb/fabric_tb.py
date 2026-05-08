@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
     sim = os.getenv("SIM", "icarus")
     pdk_root = os.getenv("PDK_ROOT", Path("~/.ciel").expanduser())
-    pdk = os.getenv("PDK", "ihp-sg13g2")
-    scl = os.getenv("SCL", "sg13g2_stdcell")
+    pdk = os.getenv("PDK", "sky130A")
+    scl = os.getenv("SCL", "sky130A_stdcell")
     gl = os.getenv("GL", None)
     emulation = os.getenv("EMULATION", False)
     tile_library = os.getenv("TILE_LIBRARY", "classic")
@@ -41,7 +41,12 @@ if __name__ == "__main__":
     test_filter = None
     
     if emulation:
-        sources.append(proj_path / f'../user_designs/designs/{tile_library}/{emulation}/{emulation}.vh')
+        vh_file = proj_path / f'../user_designs/designs/{tile_library}/{emulation}/{emulation}.vh'
+        if not vh_file.exists():
+            print(f"Error: Bitstream header not found at {vh_file}")
+            print(f"Make sure to build the design first: FABRIC={fabric} make -C user_designs/designs/{tile_library}/{emulation} all")
+            exit(1)
+        sources.append(vh_file)
         defines = {"EMULATION": True}
         test_filter = "test_" + emulation
     

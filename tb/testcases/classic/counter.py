@@ -8,7 +8,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
 from cocotb.types import LogicArray, Logic
 
-from ..common import zero_bitstream, upload_bitstream, PCF, fabric, tile_library
+from ..common import zero_bitstream, upload_bitstream, PCF, fabric, tile_library, get_pcf_path
 
 testname = Path(__file__).stem
 proj_path = Path(__file__).resolve().parent
@@ -17,12 +17,13 @@ proj_path = Path(__file__).resolve().parent
 async def test_counter(dut):
     """Load bitstream for counter"""
 
-    pcf = PCF(dut, proj_path / f"../../../fabrics/{fabric}/constraints.pcf")
+    pcf = PCF(dut, get_pcf_path(proj_path, fabric, tile_library, testname))
     pcf.write_gtkw(f"{testname}.gtkw", ["clk1", "clk2", "rst", "ena", "c"])
     
     # Reset
     pcf.set("clk1", Logic(0), index=0)
-    pcf.set("clk2", Logic(0), index=0)
+    if "clk2" in pcf.signals:
+        pcf.set("clk2", Logic(0), index=0)
     pcf.set("rst", Logic(1), index=0)
     pcf.set("ena", Logic(1), index=0)
     await Timer(10, unit="ns")
