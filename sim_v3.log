@@ -1,0 +1,44 @@
+warning: Git tree '/home/ank/Desktop/WORK/Task_3/sky130-fabulous-testchip' is dirty
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.13.9 interpreter at /nix/store/bk7h0wpk2gxqbxc0pnh93bka30ja1pyn-devshell-dir/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 13.0 (devel)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1778251250
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/site-packages/cocotb
+     0.00ns ERROR    cocotb.regression                  Configuring the assertion rewrite hook using pytest 8.4.2 failed. Please file a bug report!
+                                                        Traceback (most recent call last):
+                                                          File "/nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/site-packages/cocotb/regression.py", line 278, in setup_pytest_assertion_rewriting
+                                                            pytest_conf = Config.fromdictargs(
+                                                                {}, ["--capture=no", "-o", f"python_files={python_files}"]
+                                                            )
+                                                          File "/nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/site-packages/_pytest/config/__init__.py", line 1199, in fromdictargs
+                                                            config = get_config(args)
+                                                          File "/nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/site-packages/_pytest/config/__init__.py", line 294, in get_config
+                                                            dir=pathlib.Path.cwd(),
+                                                                ~~~~~~~~~~~~~~~~^^
+                                                          File "/nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/pathlib/_abc.py", line 746, in cwd
+                                                            return cls('').absolute()
+                                                                   ~~~~~~~~~~~~~~~~^^
+                                                          File "/nix/store/1nnbjrnq9qng3421vkllqznnc08ngs2m-python3-3.13.9-env/lib/python3.13/pathlib/_local.py", line 649, in absolute
+                                                            cwd = os.getcwd()
+                                                        FileNotFoundError: [Errno 2] No such file or directory
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running testcases.classic.counter.test_counter (1/1)
+                                                            Load bitstream for counter
+Reading PCF file: /home/ank/Desktop/WORK/Task_3/sky130-fabulous-testchip/tb/testcases/classic/../../../user_designs/designs/classic/counter/generated_constraints.pcf
+     0.00ns WARNING  ..b.Test test_counter.test_counter [Errno 2] No such file or directory: 'counter.gtkw'
+                                                        Traceback (most recent call last):
+                                                          File "/home/ank/Desktop/WORK/Task_3/sky130-fabulous-testchip/tb/testcases/classic/counter.py", line 21, in test_counter
+                                                            pcf.write_gtkw(f"{testname}.gtkw", ["clk1", "clk2", "rst", "ena", "c"])
+                                                            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                          File "/home/ank/Desktop/WORK/Task_3/sky130-fabulous-testchip/tb/testcases/common.py", line 170, in write_gtkw
+                                                            with open(path, "w") as outfile:
+                                                                 ~~~~^^^^^^^^^^^
+                                                        FileNotFoundError: [Errno 2] No such file or directory: 'counter.gtkw'
+     0.00ns WARNING  cocotb.regression                  testcases.classic.counter.test_counter failed
+     0.00ns INFO     cocotb.regression                  ************************************************************************************************
+                                                        ** TEST                                    STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ************************************************************************************************
+                                                        ** testcases.classic.counter.test_counter   FAIL           0.00           0.34          0.00  **
+                                                        ************************************************************************************************
+                                                        ** TESTS=1 PASS=0 FAIL=1 SKIP=0                            0.00           0.35          0.00  **
+                                                        ************************************************************************************************

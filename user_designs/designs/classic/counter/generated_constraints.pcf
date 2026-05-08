@@ -1,0 +1,64 @@
+# Auto-generated PCF for classic_fabric_chipfoundry_large
+# Total available I/O pins: 48
+
+set_io clk1 X14Y12/A
+set_io c[0] X0Y1/A
+set_io c[1] X0Y1/B
+set_io c[2] X0Y2/A
+set_io c[3] X0Y2/B
+set_io c[4] X0Y3/A
+set_io c[5] X0Y3/B
+set_io c[6] X0Y4/A
+set_io c[7] X0Y4/B
+set_io ena X0Y5/A
+set_io rst X0Y5/B
+
+# Indexed I/O assignments (fallback/generic)
+set_io all[0] X0Y1/A
+set_io all[1] X0Y1/B
+set_io all[2] X0Y2/A
+set_io all[3] X0Y2/B
+set_io all[4] X0Y3/A
+set_io all[5] X0Y3/B
+set_io all[6] X0Y4/A
+set_io all[7] X0Y4/B
+set_io all[8] X0Y5/A
+set_io all[9] X0Y5/B
+set_io all[10] X0Y6/A
+set_io all[11] X0Y6/B
+set_io all[12] X0Y7/A
+set_io all[13] X0Y7/B
+set_io all[14] X0Y8/A
+set_io all[15] X0Y8/B
+set_io all[16] X0Y9/A
+set_io all[17] X0Y9/B
+set_io all[18] X0Y10/A
+set_io all[19] X0Y10/B
+set_io all[20] X0Y11/A
+set_io all[21] X0Y11/B
+set_io all[22] X0Y12/A
+set_io all[23] X0Y12/B
+set_io all[24] X14Y1/A
+set_io all[25] X14Y1/B
+set_io all[26] X14Y2/A
+set_io all[27] X14Y2/B
+set_io all[28] X14Y3/A
+set_io all[29] X14Y3/B
+set_io all[30] X14Y4/A
+set_io all[31] X14Y4/B
+set_io all[32] X14Y5/A
+set_io all[33] X14Y5/B
+set_io all[34] X14Y6/A
+set_io all[35] X14Y6/B
+set_io all[36] X14Y7/A
+set_io all[37] X14Y7/B
+set_io all[38] X14Y8/A
+set_io all[39] X14Y8/B
+set_io all[40] X14Y9/A
+set_io all[41] X14Y9/B
+set_io all[42] X14Y10/A
+set_io all[43] X14Y10/B
+set_io all[44] X14Y11/A
+set_io all[45] X14Y11/B
+set_io all[46] X14Y12/A
+set_io all[47] X14Y12/B
