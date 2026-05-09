@@ -37,10 +37,13 @@ IO_PIN_V_LENGTH: null
 # Save on file space by sharing same cells
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 #KLAYOUT_CONFLICT_RESOLUTION: SkipNewCell
-    
+
 # Clock
 #CLOCK_PERIOD: 20
 #CLOCK_PORT: UserCLK
+
+# Timing model generation
+FABULOUS_TIMING_MODEL: PHYSICAL
 
 # PDK specific
 pdk::sky130*:

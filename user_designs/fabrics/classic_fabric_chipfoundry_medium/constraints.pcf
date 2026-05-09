@@ -13,18 +13,18 @@ set_io all[9] X0Y5/B
 set_io all[10] X0Y6/A
 set_io all[11] X0Y6/B
 
-set_io all[12] X14Y1/A
-set_io all[13] X14Y1/B
-set_io all[14] X14Y2/A
-set_io all[15] X14Y2/B
-set_io all[16] X14Y3/A
-set_io all[17] X14Y3/B
-set_io all[18] X14Y4/A
-set_io all[19] X14Y4/B
-set_io all[20] X14Y5/A
-set_io all[21] X14Y5/B
-set_io all[22] X14Y6/A
-set_io all[23] X14Y6/B
+set_io all[12] X9Y1/A
+set_io all[13] X9Y1/B
+set_io all[14] X9Y2/A
+set_io all[15] X9Y2/B
+set_io all[16] X9Y3/A
+set_io all[17] X9Y3/B
+set_io all[18] X9Y4/A
+set_io all[19] X9Y4/B
+set_io all[20] X9Y5/A
+set_io all[21] X9Y5/B
+set_io all[22] X9Y6/A
+set_io all[23] X9Y6/B
 
 # For general tests
 
@@ -39,31 +39,30 @@ set_io a[2] X0Y4/A
 set_io a[3] X0Y4/B
 
 set_io a[4] X0Y5/A
-set_io a[5] X0Y5/B
-set_io b[0] X0Y6/A
-set_io b[1] X0Y6/B
+set_io b[0] X0Y5/B
+set_io b[1] X0Y6/A
+set_io b[2] X0Y6/B
 
-set_io b[2] X14Y1/A
-set_io b[3] X14Y1/B
-set_io b[4] X14Y2/A
-set_io b[5] X14Y2/B
-
-set_io c[0] X14Y3/A
-set_io c[1] X14Y3/B
-set_io c[2] X14Y4/A
-set_io c[3] X14Y4/B
-set_io c[4] X14Y5/A
-set_io c[5] X14Y5/B
-set_io c[6] X14Y6/A
-set_io c[7] X14Y6/B
+set_io b[3] X9Y1/A
+set_io b[4] X9Y1/B
+set_io c[0] X9Y2/A
+set_io c[1] X9Y2/B
+set_io c[2] X9Y3/A
+set_io c[3] X9Y3/B
+set_io c[4] X9Y4/A
+set_io c[5] X9Y4/B
+set_io c[6] X9Y5/A
+set_io c[7] X9Y5/B
 
 # For the macc_8x8_20 test
 
-set_io product[0] X14Y3/A
-set_io product[1] X14Y3/B
-set_io product[2] X14Y4/A
-set_io product[3] X14Y4/B
-set_io product[4] X14Y5/A
-set_io product[5] X14Y5/B
-set_io product[6] X14Y6/A
-set_io product[7] X14Y6/B
+set_io product[0] X9Y2/A
+set_io product[1] X9Y2/B
+set_io product[2] X9Y3/A
+set_io product[3] X9Y3/B
+set_io product[4] X9Y4/A
+set_io product[5] X9Y4/B
+set_io product[6] X9Y5/A
+set_io product[7] X9Y5/B
+set_io product[8] X9Y6/A
+set_io product[9] X9Y6/B

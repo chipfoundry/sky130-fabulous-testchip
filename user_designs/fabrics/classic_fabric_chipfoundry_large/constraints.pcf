@@ -26,29 +26,17 @@ set_io all[22] X0Y12/A
 set_io all[23] X0Y12/B
 
 set_io all[24] X14Y1/A
-set_io all[25] X14Y1/B
-set_io all[26] X14Y2/A
-set_io all[27] X14Y2/B
-set_io all[28] X14Y3/A
-set_io all[29] X14Y3/B
-set_io all[30] X14Y4/A
-set_io all[31] X14Y4/B
-set_io all[32] X14Y5/A
-set_io all[33] X14Y5/B
-set_io all[34] X14Y6/A
-set_io all[35] X14Y6/B
-set_io all[36] X14Y7/A
-set_io all[37] X14Y7/B
-set_io all[38] X14Y8/A
-set_io all[39] X14Y8/B
-set_io all[40] X14Y9/A
-set_io all[41] X14Y9/B
-set_io all[42] X14Y10/A
-set_io all[43] X14Y10/B
-set_io all[44] X14Y11/A
-set_io all[45] X14Y11/B
-set_io all[46] X14Y12/A
-set_io all[47] X14Y12/B
+set_io all[25] X14Y2/A
+set_io all[26] X14Y3/A
+set_io all[27] X14Y4/A
+set_io all[28] X14Y5/A
+set_io all[29] X14Y6/A
+set_io all[30] X14Y7/A
+set_io all[31] X14Y8/A
+set_io all[32] X14Y9/A
+set_io all[33] X14Y10/A
+set_io all[34] X14Y11/A
+set_io all[35] X14Y12/A
 
 
 # For general tests
@@ -82,9 +70,9 @@ set_io c[1] X0Y11/B
 set_io c[2] X0Y12/A
 set_io c[3] X0Y12/B
 set_io c[4] X14Y1/A
-set_io c[5] X14Y1/B
-set_io c[6] X14Y2/A
-set_io c[7] X14Y2/B
+set_io c[5] X14Y2/A
+set_io c[6] X14Y3/A
+set_io c[7] X14Y4/A
 
 # For the register_file test
 
@@ -114,21 +102,21 @@ set_io word_b[2] X0Y12/A
 set_io word_b[3] X0Y12/B
 
 set_io word_c[0] X14Y1/A
-set_io word_c[1] X14Y1/B
-set_io word_c[2] X14Y2/A
-set_io word_c[3] X14Y2/B
+set_io word_c[1] X14Y2/A
+set_io word_c[2] X14Y3/A
+set_io word_c[3] X14Y4/A
 
 # For the macc_8x8_20 test
 
 set_io product[0] X14Y1/A
-set_io product[1] X14Y1/B
-set_io product[2] X14Y2/A
-set_io product[3] X14Y2/B
-set_io product[4] X14Y3/A
-set_io product[5] X14Y3/B
-set_io product[6] X14Y4/A
-set_io product[7] X14Y4/B
-set_io product[8] X14Y5/A
-set_io product[9] X14Y5/B
-set_io product[10] X14Y6/A
-set_io product[11] X14Y6/B
+set_io product[1] X14Y2/A
+set_io product[2] X14Y3/A
+set_io product[3] X14Y4/A
+set_io product[4] X14Y5/A
+set_io product[5] X14Y6/A
+set_io product[6] X14Y7/A
+set_io product[7] X14Y8/A
+set_io product[8] X14Y9/A
+set_io product[9] X14Y10/A
+set_io product[10] X14Y11/A
+set_io product[11] X14Y12/A

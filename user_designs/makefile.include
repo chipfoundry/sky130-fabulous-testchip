@@ -2,7 +2,7 @@
 PDK 			?= sky130A
 FABRIC 			?= classic_fabric_chipfoundry_large
 TILE_LIBRARY		?= classic
-FABULOUS_ROOT 		?= $(abspath ../../../../fabrics/$(FABRIC)/macro/$(PDK)/fabulous)
+FABULOUS_ROOT 		?= $(abspath ../../../fabrics/$(FABRIC)/macro/$(PDK)/fabulous)
 PCF_CONSTRAINTS 		?= $(abspath $(FABULOUS_ROOT)/../../../constraints.pcf)
 TOP 			?= top_wrapper
 FABRIC_UPPER             = $(shell echo $(FABRIC) | tr  '[:lower:]' '[:upper:]')

@@ -51,19 +51,7 @@ The chip will be packaged using ChipFoundry's QFN service:
 | 20, 29, 52, 61 | vddio          | I/O Power (3.3V - 5.0V)              |
 | 21, 30, 51, 60 | vssio          | I/O Ground                           |
 
-> [!NOTE]
-> To build the chip, enable the following PDK version using ciel: 1e931c9417df0478df9ee6b7289202f3e87440ab
-> In addition, the LibreLane dev branch must be used: `nix shell github:librelane/librelane/dev`
-
-This repository contains a collection of fabrics using the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
-
-The fabrics can be found under `fabrics/`. Current fabrics include:
-
-- classic_fabric_chipfoundry_small
-- classic_fabric_chipfoundry_medium
-- classic_fabric_chipfoundry_large
-
-The prefix describes the tile library that is used, in this case `classic`.
+This fabrics in this repository use the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
 
 The fabrics can be implemented with LibreLane using the FABulous plugin for LibreLane: [librelane_plugin_fabulous](https://github.com/mole99/librelane_plugin_fabulous).
 See below for more information about stitching the fabric. 
@@ -110,6 +98,13 @@ make classic_fabric_chipfoundry_large
 After a fabrics has been implemented you can view it either in OpenROAD or KLayout by appending `-openroad` or `-klayout` to the fabric name.
 For example, to view `classic_fabric_chipfoundry_large` in OpenROAD, run: `make classic_fabric_chipfoundry_large-openroad`.
 
+After implementing the fabrics, copy the files over:
+
+```
+make classic_fabric_chipfoundry_large-copy
+```
+
+
 ## Implement User Designs
 
 Please see the README in `user_designs/` on how to implement a user design for the fabrics.
@@ -150,3 +145,26 @@ cd tb; python3 fabric_tb.py
 ```
 
 And it will run all available test cases for the selected fabric and tile library.
+
+
+### Implement The Chip
+
+> [!NOTE]
+> To build the chip, enable the following PDK version using ciel: 1e931c9417df0478df9ee6b7289202f3e87440ab
+> In addition, the LibreLane dev branch must be used: `nix shell github:librelane/librelane/dev`
+
+To implement the full chip, simply run:
+
+```
+make librelane
+```
+
+To view the results:
+
+```
+make librelane-klayout
+```
+
+```
+make librelane-openroad
+```

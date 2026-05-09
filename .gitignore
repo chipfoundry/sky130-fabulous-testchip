@@ -8,8 +8,12 @@ build
 macro/
 runs/
 
+# explicitly allow nextpnr model
+!user_designs/fabrics/*/macro/
+
 # Chip
 final/
+out.def
 
 # Python
 *.egg-info/
