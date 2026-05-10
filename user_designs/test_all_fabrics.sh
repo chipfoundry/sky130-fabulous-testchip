@@ -272,13 +272,63 @@ main() {
         exit 1
     fi
 
-    if [ "$#" -eq 0 ]; then
-        run_tests
+    local TARGET_DESIGN=""
+    local TARGET_FABRIC=""
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -d|--design)
+                TARGET_DESIGN="$2"
+                shift 2
+                ;;
+            -f|--fabric)
+                TARGET_FABRIC="$2"
+                # Normalize fabric name if short version given
+                if [[ "$TARGET_FABRIC" == "small" ]]; then TARGET_FABRIC="classic_fabric_chipfoundry_small"; fi
+                if [[ "$TARGET_FABRIC" == "medium" ]]; then TARGET_FABRIC="classic_fabric_chipfoundry_medium"; fi
+                if [[ "$TARGET_FABRIC" == "large" ]]; then TARGET_FABRIC="classic_fabric_chipfoundry_large"; fi
+                shift 2
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+
+    # If targets specified, run targeted tests
+    if [[ -n "$TARGET_DESIGN" ]] || [[ -n "$TARGET_FABRIC" ]]; then
+        log_section "Targeted Fabric Validation"
+        
+        local designs_to_test
+        if [[ -n "$TARGET_DESIGN" ]]; then
+            designs_to_test=("$TARGET_DESIGN")
+        else
+            designs_to_test=("${SIMPLE_DESIGNS[@]}" "${COMPLEX_DESIGNS[@]}" "${MEMORY_DESIGNS[@]}")
+        fi
+
+        local fabrics_to_test
+        if [[ -n "$TARGET_FABRIC" ]]; then
+            fabrics_to_test=("$TARGET_FABRIC")
+        else
+            fabrics_to_test=("${FABRICS[@]}")
+        fi
+
+        for design in "${designs_to_test[@]}"; do
+            for fabric in "${fabrics_to_test[@]}"; do
+                build_design "$design" "$fabric"
+            done
+        done
         print_summary
     else
-        echo "Arguments provided, but full argument parsing not yet implemented"
-        echo "Showing help..."
-        show_help
+        # Default: run everything
+        run_tests
+        print_summary
     fi
 }
 
