@@ -235,7 +235,7 @@ Generate the bitstream for your target fabric (e.g., Large).
 # Directory: user_designs/designs/classic/my_custom_adder/
 FABRIC=classic_fabric_chipfoundry_large make clean all
 ```
-### Technical Justification: 
+ 
 The `make all` target triggers a three-stage pipeline:
 - `yosys`: Synthesizes RTL to a JSON netlist using the FABulous techmap.
 - `generate_pcf.py`: Automatically discovers ports and maps them to the nearest available fabric I/O pins.
