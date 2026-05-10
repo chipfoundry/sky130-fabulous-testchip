@@ -13,7 +13,7 @@ This directory provides the infrastructure for synthesizing, routing, and genera
 The environment relies on specialized forks of Yosys and NextPNR. Access them via the Nix shell:
 ```bash
 # Directory: user_designs/
-nix-shell
+nix develop # (or nix-shell)
 ```
 **Note:** To generate the bitstreams you need to `pip3 install fasm`.
 

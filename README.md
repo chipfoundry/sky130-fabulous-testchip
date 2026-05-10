@@ -55,16 +55,27 @@ Nix is utilized to provision a deterministic development environment, ensuring t
 
 ### 4.1. Entering the Development Environment
 **Directory**: Root (`/`)
-**Environment**: nix-shell
+**Environment**: Nix Shell (Flakes recommended)
+
+#### Option A: Modern Nix (Recommended)
+> `nix develop` is the most robust method and ensures 100% reproducibility by ignoring host system channels.
+```bash
+# Initialize the hermetic shell using Flakes
+nix develop
+```
+
+#### Option B: Legacy nix-shell (Fallback)
+> Use this if you haven't enabled experimental Flakes support in your Nix installation.
 ```bash
 # Resolve channel dependencies
 export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz
 
-# Initialize the hermetic shell
+# Initialize the shell
 nix-shell
 ```
-> [!NOTE]
-> The `--run` or interactive `nix-shell` ensures that all Python dependencies (`pyyaml`, `fasm`) and EDA binaries are available in the `$PATH` without polluting the host system.
+
+> [!TIP]
+> The `nix develop` command ensures that all Python dependencies (`cocotb`, `pyyaml`, `fasm`) and EDA binaries are available in the `$PATH` exactly as specified in the `flake.lock`.
 
 ---
 
@@ -74,7 +85,7 @@ nix-shell
 Tiles must be physically implemented before fabric assembly.
 
 **Directory**: `ip/fabulous-tiles`
-**Environment**: nix-shell
+**Environment**: nix develop / nix-shell
 
 #### Build Options & Examples:
 | Goal | Command | Technical Justification |
@@ -102,7 +113,7 @@ PDK=sky130A TILE_LIBRARY=classic make all
 Aggregating hardened tiles into a routable FPGA grid.
 
 **Directory**: Root (`/`)
-**Environment**: nix-shell
+**Environment**: nix develop / nix-shell
 
 #### Fabric Targets:
 | Target | Complexity | Build Command |
@@ -130,7 +141,7 @@ make classic_fabric_chipfoundry_medium-klayout
 Compiling Verilog RTL into a bitstream compatible with the target fabric.
 
 **Directory**: `user_designs/`
-**Environment**: nix-shell
+**Environment**: nix develop / nix-shell
 
 #### Manual Compilation Example:
 ```bash
@@ -168,7 +179,7 @@ Build behavior is controlled via environment variables.
 ## 7. Simulation & Verification
 
 **Directory**: `tb/`
-**Environment**: nix-shell
+**Environment**: nix develop / nix-shell
 
 ### 7.1. RTL Verification Modes
 
@@ -213,7 +224,7 @@ Procedure to implement, verify, and scale a custom RTL design across the FABulou
 Ensure you are in the root directory and the Nix environment is active.
 ```bash
 # Directory: /
-nix-shell
+nix develop  # or nix-shell
 mkdir -p user_designs/designs/classic/my_custom_design
 ```
 
