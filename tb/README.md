@@ -1,19 +1,13 @@
 # FABulous Fabric Simulation Suite
 
-This directory contains the [cocotb](https://www.cocotb.org/)-based simulation environment for the FABulous FPGA fabrics.
+This directory contains the [cocotb](https://www.cocotb.org/)-based simulation environment for verifying RTL designs on FABulous FPGA fabrics.
 
-## 1. Running Simulations
+## 1. Verification Methodologies
 
-### Prerequisites
-Ensure you are in the Nix environment:
+### 1.1. RTL Emulation Mode (Accelerated)
+Loads a pre-compiled bitstream directly into the fabric's configuration memory at `t=0`.
 ```bash
-nix-shell
-```
-
-### RTL Emulation Mode (Recommended)
-This mode loads a pre-compiled bitstream into the fabric's configuration memory at the start of simulation. It is much faster than the full configuration flow.
-
-```bash
+# Directory: tb/
 export PDK=sky130A
 export FABRIC=classic_fabric_chipfoundry_large
 export TILE_LIBRARY=classic
@@ -21,21 +15,23 @@ export EMULATION=counter
 
 python3 fabric_tb.py
 ```
+> Accelerates functional verification of user logic by bypassing the multi-millisecond serial bitstream configuration phase.
 
-### Full RTL Simulation
-To test the entire configuration flow (uploading the bitstream bit-by-bit), unset the `EMULATION` variable:
+### 1.2. Full RTL Simulation (Gate-Level Accuracy)
+Tests the entire serial configuration interface and the internal configuration chain.
 ```bash
 unset EMULATION
 python3 fabric_tb.py
 ```
+> Required to verify the integrity of the FPGA's configuration logic and serial clock-data synchronization.
 
-## 2. Recent Validation Results (Large Fabric)
+## 2. Validation Benchmarks (Large Fabric)
 
-**Environment**: Sky130A PDK | `classic_fabric_chipfoundry_large`
+**Reference Configuration**: Sky130A PDK | `classic_fabric_chipfoundry_large`
 
-| Testcase | Status | Notes |
+| Testcase | Status | Verification Note |
 | :--- | :--- | :--- |
-| `all_ones` | PASS | Verified with dynamic PCF mapping |
+| `all_ones` | PASS | Verified with dynamic 48-pin PCF mapping. |
 | `all_zeros` | PASS | |
 | `passthrough` | PASS | |
 | `addition` | PASS | |
@@ -44,17 +40,15 @@ python3 fabric_tb.py
 | `macc_8x8_20` | PASS | |
 | `ram_32x4_2r_1w`| PASS | |
 | `sys_reset` | PASS | |
-| `register_file` | FAIL | Missing BRAM/RegFile Hard Macros in logic-only fabric |
+| `register_file` | FAIL | Routing timeout due to logic density (Missing Hard Macros). |
 
-## 3. Technical Findings
+## 3. Technical Findings & Root Causes
 
-### Why do some tests fail?
-- **PDK Mismatches**: Designs like `ihp_sram` are hard-coded for the IHP SG13G2 PDK and will not synthesize correctly for Sky130A without modification.
-- **Architectural Limits**: The `register_file` design is too dense to be built solely out of logic LUTs (Distributed RAM). To fix this, a fabric grid containing dedicated Memory Tiles (BRAM) must be used.
-- **Bitstream Errors**: If a simulation fails with a "Bitstream not found" error, ensure the user design has been successfully built for the target fabric in the `user_designs/` directory.
+### 3.1. Design Scaling Limits
+- **PDK Compatibility**: Designs hard-coded for non-Sky130 primitives (e.g., IHP SRAM) will fail synthesis.
+- **Architectural Constraints**: Large memories (`register_file`) cannot be built efficiently from LUTs. A fabric grid containing dedicated BRAM tiles is required for closure.
 
-### Intelligent Pin Mapping
-The simulation suite is integrated with the **Auto-Discovery PCF Generator**. It automatically looks for a `generated_constraints.pcf` in the design directory to ensure the simulation stimuli match the physical bitstream mapping.
+### 3.2. Automated Constraints Synchronization
+The testbench utilizes a **Dynamic PCF Discovery** helper. It automatically parses `generated_constraints.pcf` from the design directory to ensure that simulation signals are applied to the exact physical pins mapped during the build stage.
 
 ---
-*Maintained as part of the Multi-Fabric Build System stabilization.*
