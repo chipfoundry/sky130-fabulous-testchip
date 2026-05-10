@@ -91,13 +91,23 @@
         let
           pkgs = self.legacyPackages."${system}";
           callPackage = lib.callPackageWith pkgs;
-          python-env = (pkgs.python3.withPackages (ps: with ps; [ fasm pyyaml ]));
+          python-env = (pkgs.python3.withPackages (ps: with ps; [ 
+            fasm 
+            pyyaml 
+            cocotb
+            pytest
+          ]));
         in
         {
           default = pkgs.mkShell {
             buildInputs = [
               pkgs.nextpnr
               pkgs.yosys
+              pkgs.iverilog
+              pkgs.verilator
+              pkgs.gnumake
+              pkgs.gnugrep
+              pkgs.gawk
               python-env
             ];
           };

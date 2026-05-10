@@ -58,6 +58,9 @@ if __name__ == "__main__":
 
     # Add custom cells
     sources.append(tiles_path / "custom.v")
+    
+    # Add simulation patches
+    sources.append(proj_path / ".." / "src" / "sim_primitives_patch.v")
 
     # Add fabric netlist
     sources.append(proj_path / f'../fabrics/{fabric}/macro/{pdk}/fabulous/{fabric}.v')

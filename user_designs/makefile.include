@@ -64,6 +64,11 @@ $(PCF_CONSTRAINTS): $(FABRIC_CSV) $(TOP).json
 	@python3 $(PCF_GEN_SCRIPT) $(FABRIC_CSV) $(TOP).json $(PCF_CONSTRAINTS)
 	@echo "Generated $(PCF_CONSTRAINTS)"
 
+FFS                     ?= -ff "\$$_DFF_P_" x \
+			   -ff "\$$_DFFE_PP_" x \
+			   -ff "\$$_SDFF_PP?_" x \
+			   -ff "\$$_SDFFE_PP?P_" x \
+			   -ff "\$$_DLATCH_?_" x
 
 synth:
 	yosys \
