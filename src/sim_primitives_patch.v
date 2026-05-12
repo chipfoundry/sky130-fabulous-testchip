@@ -2,6 +2,7 @@
 // to support simulation without polluting the submodules.
 
 // Sky130 Latch with complementary outputs
+/*
 module LHQD1 (
     input wire D,
     input wire E,
@@ -58,3 +59,4 @@ module cus_mux161_buf (
         .X(X)
     );
 endmodule
+*/

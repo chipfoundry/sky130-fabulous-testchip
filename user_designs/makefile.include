@@ -23,7 +23,7 @@ $(info $(FABRIC))
 $(info $(TILE_LIBRARY))
 
 ifeq ($(TILE_LIBRARY),classic)
-# MULTIPLIER_MAP_PATH 	 = -multiplier-map ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/techmap/MACC_8x8_20_map.v
+MULTIPLIER_MAP_PATH 	 = -multiplier-map ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/techmap/MACC_8x8_20_map.v
 endif
 
 EXTRA_PLIBS_PATH 	 = -extra-plib ../../../../ip/fabulous-tiles/primitives/FABULOUS_LC/yosys/primitives/prims.v \
@@ -36,7 +36,9 @@ EXTRA_PLIBS_PATH 	 = -extra-plib ../../../../ip/fabulous-tiles/primitives/FABULO
 
 ifeq ($(TILE_LIBRARY),classic)
 EXTRA_PLIBS_PATH 	+= -extra-plib ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/primitives/RAM_32x4_2R_1W.v \
-   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/primitives/MACC_8x8_20.v
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/primitives/MACC_8x8_20.v \
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x32_1RW/yosys/primitives/IHP_SRAM_1024x32_1RW.v \
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x16_2RW/yosys/primitives/IHP_SRAM_1024x16_2RW.v
 endif
 
 
@@ -45,11 +47,13 @@ EXTRA_MAPS_PATH		 = -extra-map ../../../../ip/fabulous-tiles/primitives/FABULOUS
 			   -extra-map ../../../../ip/fabulous-tiles/primitives/IOBUF/yosys/techmap/IOBUF_map.v
 
 ifeq ($(TILE_LIBRARY),classic)
-EXTRA_MAPS_PATH		+= -extra-map ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/techmap/RAM_32x4_2R_1W_map.v
+EXTRA_MAPS_PATH		+= -extra-map ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/techmap/RAM_32x4_2R_1W_map.v \
+			   -extra-map ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x32_1RW/yosys/techmap/IHP_SRAM_1024x32_1RW_map.v \
+			   -extra-map ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x16_2RW/yosys/techmap/IHP_SRAM_1024x16_2RW_map.v
 endif
 
 ifeq ($(TILE_LIBRARY),classic)
-#EXTRA_MLIBMAPS_PATH	 = -extra-mlibmap ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/memlib/RAM_32x4_2R_1W_lib.txt
+EXTRA_MLIBMAPS_PATH	 = -extra-mlibmap ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/memlib/RAM_32x4_2R_1W_lib.txt
 endif
 
 
@@ -80,7 +84,9 @@ synth:
 	-complex-dff \
 	$(FFS) \
 	$(EXTRA_PLIBS_PATH) \
-	$(EXTRA_MAPS_PATH); \
+	$(MULTIPLIER_MAP_PATH) \
+	$(EXTRA_MAPS_PATH) \
+	$(EXTRA_MLIBMAPS_PATH); \
 	show -format dot -prefix $(TOP); \
 	write_json -noscopeinfo $(TOP).json; \
 	" \
