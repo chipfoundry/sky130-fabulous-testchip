@@ -72,7 +72,9 @@ module fabric_spi_controller #(
             S_SHIFT_ADDR:
                 if (shift_cnt == '0 && sclk_o) next_state = S_LOAD_DATA;
             S_LOAD_DATA:
+                /* verilator lint_off WIDTHEXPAND */
                 if (address_counter_words == SLOT_OFFSET_WORDS*slot+BITSTREAM_LENGTH_WORDS) next_state = S_IDLE;
+                /* verilator lint_on WIDTHEXPAND */
                 else next_state = S_SHIFT_DATA;
             S_SHIFT_DATA:
                 if (shift_cnt == '0 && sclk_o) next_state = S_WRITE_DATA;
@@ -84,7 +86,7 @@ module fabric_spi_controller #(
     assign busy_o = curr_state != S_IDLE;
 
     // State transition
-    always_ff @(posedge clk_i) begin
+    always_ff @(posedge clk_i, negedge rst_ni) begin
         if (!rst_ni) begin
             curr_state <= S_IDLE;
         end else begin
@@ -92,7 +94,7 @@ module fabric_spi_controller #(
         end
     end
     
-    always_ff @(posedge clk_i) begin
+    always_ff @(posedge clk_i, negedge rst_ni) begin
         if (!rst_ni) begin
             shift_cnt <= '0;
             shift_register <= '0;
@@ -107,7 +109,9 @@ module fabric_spi_controller #(
             case (curr_state)
                 S_IDLE: begin
                     if (start_i) begin
+                        /* verilator lint_off WIDTHTRUNC */
                         address_counter_words <= SLOT_OFFSET_WORDS * slot_i;
+                        /* verilator lint_on WIDTHTRUNC */
                         slot <= slot_i;
                     end
                     

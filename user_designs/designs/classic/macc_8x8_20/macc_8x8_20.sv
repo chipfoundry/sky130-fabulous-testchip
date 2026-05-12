@@ -8,9 +8,15 @@ module macc_8x8_20 (
     input  wire       rst,
     input  wire       ena,
     
+    `ifdef CLASSIC_FABRIC_CHIPFOUNDRY_LARGE
     input  wire [ 5:0] a,
     input  wire [ 5:0] b,
     output wire [11:0] product
+    `else
+    input  wire [ 4:0] a,
+    input  wire [ 4:0] b,
+    output wire [ 9:0] product
+    `endif
 );
 
     logic clk1_buf;

@@ -4,7 +4,11 @@
 `default_nettype none
 
 module all_ones (
-    output wire [27:0] all
+    `ifdef CLASSIC_FABRIC_CHIPFOUNDRY_LARGE
+    output wire [36-1:0] all
+    `else
+    output wire [24-1:0] all
+    `endif
 );
 
     assign all = '1;

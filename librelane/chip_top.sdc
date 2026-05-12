@@ -44,6 +44,8 @@ set clocks [get_clocks $clock_port]
 # Input-only pads
 set clk_core_input_ports [get_ports { 
   rst_n_PAD
+  spi_mode_PAD
+  fpga_select_PAD[*]
 }] 
 
 set_input_delay -min 0 -clock $clocks $clk_core_input_ports
@@ -51,6 +53,11 @@ set_input_delay -max $input_delay_value -clock $clocks $clk_core_input_ports
 
 # Bidirectional pads
 set clk_core_inout_ports [get_ports { 
+  spi_sclk_PAD
+  spi_cs_n_PAD
+  spi_mosi_PAD
+  spi_miso_PAD
+
 	bidir_PAD[*]
 }] 
 
@@ -78,3 +85,17 @@ if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL
     set_propagated_clock [all_clocks]
 }
 
+# False paths
+
+set_false_path -setup -hold -from [get_ports {rst_n_PAD}]
+
+set_false_path -setup -hold -from [get_ports {spi_mode_PAD}]
+
+set_false_path -setup -hold -from [get_ports {fpga_select_PAD[*]}]
+
+set_false_path -setup -hold -from [get_ports {spi_sclk_PAD}]
+set_false_path -setup -hold -from [get_ports {spi_cs_n_PAD}]
+set_false_path -setup -hold -from [get_ports {spi_mosi_PAD}]
+set_false_path -setup -hold -from [get_ports {spi_miso_PAD}]
+
+set_false_path -setup -hold -through [get_ports {bidir_PAD[*]}]

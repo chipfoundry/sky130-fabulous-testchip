@@ -36,39 +36,50 @@ meta:
     KLayout.Density: null
     Checker.KLayoutDensity: null
     
-    # TODO
-    Checker.DisconnectedPins: null
+    # Because of hierarchy
+    Checker.YosysUnmappedCells: null
+
+    +OpenROAD.GlobalRouting: Odb.InsertECODiodes
 
 DESIGN_NAME: chip_top
 VERILOG_FILES:
 - dir::../src/chip_top.sv
 - dir::../src/chip_core.sv
-- dir::../ip/fabric_bitbang/fabric_bitbang.sv
+- dir::../src/synchronizer.sv
 - dir::../ip/fabric_config/fabric_config.sv
+- dir::../ip/fabric_spi/fabric_spi_controller.sv
+- dir::../ip/fabric_spi/fabric_spi_receiver.sv
 
 # Enable plugin for better SystemVerilog support
 # USE_SLANG: True
 
+SYNTH_HIERARCHY_MODE: keep
+
 # Slightly smaller file sizes
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+LINTER_DISABLE_WARNINGS:
+- DECLFILENAME
+- EOFNEWLINE
+- PINCONNECTEMPTY
+- PINMISSING
+- UNUSEDSIGNAL
 
 PAD_CFG: dir::pad_cfg.tcl
 
 # Specify the pad instances for the padring
 PAD_SOUTH: [
     # 11 pads
-
     "vddio_pads\\[0\\].vddio_pad",
     "vssio_pads\\[0\\].vssio_pad",
 
-    clock_pad,
-    reset_pad,
-
-    "bidirs\\[0\\].bidir_pad",
-    "bidirs\\[1\\].bidir_pad",
-    "bidirs\\[2\\].bidir_pad",
-    "bidirs\\[3\\].bidir_pad",
-    "bidirs\\[4\\].bidir_pad",
+    "bidirs\\[6\\].bidir_pad",
+    "bidirs\\[7\\].bidir_pad",
+    "bidirs\\[8\\].bidir_pad",
+    "bidirs\\[9\\].bidir_pad",
+    "bidirs\\[10\\].bidir_pad",
+    "bidirs\\[11\\].bidir_pad",
+    "bidirs\\[12\\].bidir_pad",
 
     "vddio_pads\\[1\\].vddio_pad",
     "vssio_pads\\[1\\].vssio_pad"
@@ -79,14 +90,6 @@ PAD_EAST: [
     "vccd_pads\\[0\\].vccd_pad",
     "vssd_pads\\[0\\].vssd_pad",
 
-    "bidirs\\[5\\].bidir_pad",
-    "bidirs\\[6\\].bidir_pad",
-    "bidirs\\[7\\].bidir_pad",
-    "bidirs\\[8\\].bidir_pad",
-    "bidirs\\[9\\].bidir_pad",
-    "bidirs\\[10\\].bidir_pad",
-    "bidirs\\[11\\].bidir_pad",
-    "bidirs\\[12\\].bidir_pad",
     "bidirs\\[13\\].bidir_pad",
     "bidirs\\[14\\].bidir_pad",
     "bidirs\\[15\\].bidir_pad",
@@ -95,6 +98,14 @@ PAD_EAST: [
     "bidirs\\[18\\].bidir_pad",
     "bidirs\\[19\\].bidir_pad",
     "bidirs\\[20\\].bidir_pad",
+    "bidirs\\[21\\].bidir_pad",
+    "bidirs\\[22\\].bidir_pad",
+    "bidirs\\[23\\].bidir_pad",
+    "bidirs\\[24\\].bidir_pad",
+    "bidirs\\[25\\].bidir_pad",
+    "bidirs\\[26\\].bidir_pad",
+    "bidirs\\[27\\].bidir_pad",
+    "bidirs\\[28\\].bidir_pad",
     
     "vccd_pads\\[1\\].vccd_pad",
     "vssd_pads\\[1\\].vssd_pad"
@@ -105,13 +116,13 @@ PAD_NORTH: [
     "vddio_pads\\[3\\].vddio_pad",
     "vssio_pads\\[3\\].vssio_pad",
 
-    "bidirs\\[27\\].bidir_pad",
-    "bidirs\\[26\\].bidir_pad",
-    "bidirs\\[25\\].bidir_pad",
-    "bidirs\\[24\\].bidir_pad",
-    "bidirs\\[23\\].bidir_pad",
-    "bidirs\\[22\\].bidir_pad",
-    "bidirs\\[21\\].bidir_pad",
+    "bidirs\\[35\\].bidir_pad",
+    "bidirs\\[34\\].bidir_pad",
+    "bidirs\\[33\\].bidir_pad",
+    "bidirs\\[32\\].bidir_pad",
+    "bidirs\\[31\\].bidir_pad",
+    "bidirs\\[30\\].bidir_pad",
+    "bidirs\\[29\\].bidir_pad",
 
     "vddio_pads\\[2\\].vddio_pad",
     "vssio_pads\\[2\\].vssio_pad"
@@ -122,23 +133,30 @@ PAD_WEST: [
     "vccd_pads\\[3\\].vccd_pad",
     "vssd_pads\\[3\\].vssd_pad",
 
-    "bidirs\\[44\\].bidir_pad",
-    "bidirs\\[43\\].bidir_pad",
-    "bidirs\\[42\\].bidir_pad",
-    "bidirs\\[41\\].bidir_pad",
-    "bidirs\\[40\\].bidir_pad",
-    "bidirs\\[39\\].bidir_pad",
-    "bidirs\\[38\\].bidir_pad",
-    "bidirs\\[37\\].bidir_pad",
-    "bidirs\\[36\\].bidir_pad",
-    "bidirs\\[35\\].bidir_pad",
-    "bidirs\\[34\\].bidir_pad",
-    "bidirs\\[33\\].bidir_pad",
-    "bidirs\\[32\\].bidir_pad",
-    "bidirs\\[31\\].bidir_pad",
-    "bidirs\\[30\\].bidir_pad",
-    "bidirs\\[29\\].bidir_pad",
-    "bidirs\\[28\\].bidir_pad",
+    "bidirs\\[5\\].bidir_pad",
+    "bidirs\\[4\\].bidir_pad",
+    "bidirs\\[3\\].bidir_pad",
+
+    "bidirs\\[2\\].bidir_pad",
+    "bidirs\\[1\\].bidir_pad",
+    "bidirs\\[0\\].bidir_pad",
+
+    spi_mode_pad,
+
+    spi_sclk_pad,
+    spi_cs_n_pad,
+    spi_mosi_pad,
+    spi_miso_pad,
+    
+    clock_pad,
+    reset_pad,
+    
+    "fpga_selects\\[1\\].fpga_select_pad",
+    "fpga_selects\\[0\\].fpga_select_pad",
+  
+    config_busy_pad,
+
+    global_enable_pad,
         
     "vccd_pads\\[2\\].vccd_pad",
     "vssd_pads\\[2\\].vssd_pad"
@@ -159,36 +177,64 @@ GND_NETS:
 CLOCK_PORT: clk_PAD
 CLOCK_NET: clock_pad/IN
 
-CLOCK_PERIOD: 20
+# The clock is low freq because of
+# the complicated clock tree.
+# The frequency can be increased after
+# configuring the FPGA fabrics.
+CLOCK_PERIOD: 50 # 20 MHz clock
+
+CTS_OBSTRUCTION_AWARE: True
+CTS_CLK_MAX_WIRE_LENGTH: 1000
 
 # Floorplanning
 FP_SIZING: absolute
-# 3880umx5070um including 26um
-# for the sealring on all sides
-#DIE_AREA: [0, 0, 1600, 1600]
-#CORE_AREA: [400, 400, 1200, 1200]
 
 # Die area without sealring
 DIE_AREA: [0, 0, "expr::(3600 - 12)", "expr::(5200 - 12)"]
 CORE_AREA: [250, 250, "expr::$DIE_AREA[2] - 250", "expr::$DIE_AREA[3] - 250"]
 
-# TODO: just for testing
-#FP_OBSTRUCTIONS:
-#- [300, 300, "expr::$DIE_AREA[2] - 300", "expr::$DIE_AREA[3] - 300"]
+# Prevent routing close to the padring
+ROUTING_OBSTRUCTIONS:
+# Left
+- [met1, 0, 0, 199.7, "expr::$DIE_AREA[3]"]
+- [met2, 0, 0, 199.7, "expr::$DIE_AREA[3]"]
+- [met3, 0, 0, 199.7, "expr::$DIE_AREA[3]"]
+- [met4, 0, 0, 199.7, "expr::$DIE_AREA[3]"]
+- [met5, 0, 0, 199.7, "expr::$DIE_AREA[3]"]
+# Right
+- [met1, "expr::$DIE_AREA[2] - 199.7", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, "expr::$DIE_AREA[2] - 199.7", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, "expr::$DIE_AREA[2] - 199.7", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, "expr::$DIE_AREA[2] - 199.7", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, "expr::$DIE_AREA[2] - 199.7", 0, "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+# Bottom
+- [met1, 0, 0, "expr::$DIE_AREA[2]", 199.7]
+- [met2, 0, 0, "expr::$DIE_AREA[2]", 199.7]
+- [met3, 0, 0, "expr::$DIE_AREA[2]", 199.7]
+- [met4, 0, 0, "expr::$DIE_AREA[2]", 199.7]
+- [met5, 0, 0, "expr::$DIE_AREA[2]", 199.7]
+# Top
+- [met1, 0, "expr::$DIE_AREA[3] - 199.7", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met2, 0, "expr::$DIE_AREA[3] - 199.7", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met3, 0, "expr::$DIE_AREA[3] - 199.7", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met4, 0, "expr::$DIE_AREA[3] - 199.7", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
+- [met5, 0, "expr::$DIE_AREA[3] - 199.7", "expr::$DIE_AREA[2]", "expr::$DIE_AREA[3]"]
 
 # Increase for more logic
 # on your die
-PL_TARGET_DENSITY_PCT: 10
+PL_TARGET_DENSITY_PCT: 34
 GRT_ALLOW_CONGESTION: true
 
 # PDN
-PDN_CORE_RING: True
+PDN_CFG: dir::pdn_cfg.tcl
 
-IGNORE_DISCONNECTED_MODULES:
-- sky130_fd_io__top_power_hvc_wpad
-- sky130_fd_io__top_ground_hvc_wpad
-- sky130_fd_io__top_power_lvc_wpad
-- sky130_fd_io__top_ground_lvc_wpad
+PDN_HWIDTH: 3.2
+PDN_HPITCH: 100
+
+PDN_VWIDTH: 1.6
+PDN_VPITCH: 80
+
+PDN_CORE_RING: True
 
 # Maximum metal width without slotting: 30um
 PDN_CORE_RING_VWIDTH: 15
@@ -197,12 +243,24 @@ PDN_CORE_RING_HWIDTH: 15
 PDN_CORE_RING_VSPACING: 5
 PDN_CORE_RING_HSPACING: 5
 
-PDN_CORE_VERTICAL_LAYER: met2
-PDN_CORE_HORIZONTAL_LAYER: met3
+PDN_CORE_VERTICAL_LAYER: met4
+PDN_CORE_HORIZONTAL_LAYER: met5
 
 PDN_CORE_RING_CONNECT_TO_PADS: True
 PDN_CORE_RING_CONNECT_TO_PAD_LAYERS: [met3]
 PDN_ENABLE_PINS: False # xxx does not contain any terminals
+ERROR_ON_PDN_VIOLATIONS: False # to prevent false positive error
+
+IGNORE_DISCONNECTED_MODULES:
+- sky130_fd_io__top_power_hvc_wpad
+- sky130_fd_io__top_ground_hvc_wpad
+- sky130_fd_io__top_power_lvc_wpad
+- sky130_fd_io__top_ground_lvc_wpad
+- caravel_logo
+- caravel_motto
+- open_source
+- project_id_textblock
+- logo_fabulous
 
 MACROS:
   classic_fabric_chipfoundry_small:
@@ -213,8 +271,11 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_small/macro/sky130A/nl/classic_fabric_chipfoundry_small.nl.v
     instances:
-      i_chip_core.i_classic_fabric_chipfoundry_small:
-        location: [350, expr::(3600 - (260 + 50))]
+    # x should be multiple of 0.46 (Metal2 pitch)
+    # y should be multiple of 0.68 (Metal3 pitch)
+    # Standard cell row height: 2.72 (4 Metal3 tracks)
+      i_chip_core/i_classic_fabric_chipfoundry_small:
+        location: ["expr::(349.6 + (0.46 * 45))", expr::(3289.84 + (2.72 * 18))]
         orientation: N
 
   classic_fabric_chipfoundry_medium:
@@ -225,8 +286,8 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_medium/macro/sky130A/nl/classic_fabric_chipfoundry_medium.nl.v
     instances:
-      i_chip_core.i_classic_fabric_chipfoundry_medium:
-        location: [expr::(2000 - 610), expr::(3600 - (260 + 50))]
+      i_chip_core/i_classic_fabric_chipfoundry_medium:
+        location: ["expr::(1389.66 + (0.46 * 100))", expr::(3289.84 + (2.72 * 18))]
         orientation: N
 
   classic_fabric_chipfoundry_large:
@@ -237,9 +298,74 @@ MACROS:
     nl:
       - dir::../fabrics/classic_fabric_chipfoundry_large/macro/sky130A/nl/classic_fabric_chipfoundry_large.nl.v
     instances:
-      i_chip_core.i_classic_fabric_chipfoundry_large:
-        location: [350, expr::(410 - 50)]
+      i_chip_core/i_classic_fabric_chipfoundry_large:
+        location: ["expr::(349.6 + (0.46 * 45))", expr::(110 * 2.72)]
+        orientation: FS
+
+  caravel_logo:
+    gds:
+      - dir::../ip/caravel_logo/gds/caravel_logo.gds.gz
+    lef:
+      - dir::../ip/caravel_logo/lef/caravel_logo.lef
+    vh:
+      - dir::../ip/caravel_logo/vh/caravel_logo.vh
+    instances:
+      caravel_logo:
+        location: [27.800, 5039.200]
         orientation: N
+
+  caravel_motto:
+    gds:
+      - dir::../ip/caravel_motto/gds/caravel_motto.gds.gz
+    lef:
+      - dir::../ip/caravel_motto/lef/caravel_motto.lef
+    vh:
+      - dir::../ip/caravel_motto/vh/caravel_motto.vh
+    instances:
+      caravel_motto:
+        location: [109.850, 5086.950]
+        orientation: N
+
+  open_source:
+    gds:
+      - dir::../ip/open_source/gds/open_source.gds.gz
+    lef:
+      - dir::../ip/open_source/lef/open_source.lef
+    vh:
+      - dir::../ip/open_source/vh/open_source.vh
+    instances:
+      open_source:
+        location: [3381.410, 5091.710]
+        orientation: N
+
+  project_id_textblock:
+    gds:
+      - dir::../ip/project_id_textblock/gds/project_id_textblock.gds.gz
+    lef:
+      - dir::../ip/project_id_textblock/lef/project_id_textblock.lef
+    vh:
+      - dir::../ip/project_id_textblock/vh/project_id_textblock.vh
+    instances:
+      project_id_textblock:
+        location: [58.250, 59.02]
+        orientation: N
+
+  logo_fabulous:
+    gds:
+      - dir::../ip/logo_fabulous/gds/logo_fabulous.gds.gz
+    lef:
+      - dir::../ip/logo_fabulous/lef/logo_fabulous.lef
+    vh:
+      - dir::../ip/logo_fabulous/vh/logo_fabulous.vh
+    instances:
+      logo_fabulous:
+        location: [3450, 50]
+        orientation: N
+
+PDN_MACRO_CONNECTIONS:
+- "i_chip_core/i_classic_fabric_chipfoundry_large VPWR VGND VCCD VSSD"
+- "i_chip_core/i_classic_fabric_chipfoundry_small VPWR VGND VCCD VSSD"
+- "i_chip_core/i_classic_fabric_chipfoundry_medium VPWR VGND VCCD VSSD"
 
 # Because we have multiple power pads for one power domain
 MAGIC_EXT_UNIQUE: notopports
@@ -251,3 +377,67 @@ KLAYOUT_PROPERTIES: dir::sky130_render.lyp
 
 PL_RESIZER_HOLD_SLACK_MARGIN: expr::(0.1 * 2)
 GRT_RESIZER_HOLD_SLACK_MARGIN: expr::(0.05 * 2)
+
+# We're not interested in 1v95
+HOLD_VIOLATION_CORNERS:
+- nom_tt_025C_1v80
+- nom_ss_100C_1v60
+#- nom_ff_n40C_1v95
+- min_tt_025C_1v80
+- min_ss_100C_1v60
+#- min_ff_n40C_1v95
+- max_tt_025C_1v80
+- max_ss_100C_1v60
+#- max_ff_n40C_1v95
+
+RSZ_DONT_TOUCH_LIST: 
+- global_enable_PAD2CORE
+
+# Add antenna diodes to the ENABLE_H inputs
+INSERT_ECO_DIODES:
+- target: spi_mode_pad/ENABLE_H
+- target: spi_sclk_pad/ENABLE_H
+- target: spi_cs_n_pad/ENABLE_H
+- target: spi_mosi_pad/ENABLE_H
+- target: spi_miso_pad/ENABLE_H
+- target: clock_pad/ENABLE_H
+- target: reset_pad/ENABLE_H
+- target: "fpga_selects[1].fpga_select_pad/ENABLE_H"
+- target: "fpga_selects[0].fpga_select_pad/ENABLE_H"
+- target: config_busy_pad/ENABLE_H
+- target: "bidirs[0].bidir_pad/ENABLE_H"
+- target: "bidirs[1].bidir_pad/ENABLE_H"
+- target: "bidirs[2].bidir_pad/ENABLE_H"
+- target: "bidirs[3].bidir_pad/ENABLE_H"
+- target: "bidirs[4].bidir_pad/ENABLE_H"
+- target: "bidirs[5].bidir_pad/ENABLE_H"
+- target: "bidirs[6].bidir_pad/ENABLE_H"
+- target: "bidirs[7].bidir_pad/ENABLE_H"
+- target: "bidirs[8].bidir_pad/ENABLE_H"
+- target: "bidirs[9].bidir_pad/ENABLE_H"
+- target: "bidirs[10].bidir_pad/ENABLE_H"
+- target: "bidirs[11].bidir_pad/ENABLE_H"
+- target: "bidirs[12].bidir_pad/ENABLE_H"
+- target: "bidirs[13].bidir_pad/ENABLE_H"
+- target: "bidirs[14].bidir_pad/ENABLE_H"
+- target: "bidirs[15].bidir_pad/ENABLE_H"
+- target: "bidirs[16].bidir_pad/ENABLE_H"
+- target: "bidirs[17].bidir_pad/ENABLE_H"
+- target: "bidirs[18].bidir_pad/ENABLE_H"
+- target: "bidirs[19].bidir_pad/ENABLE_H"
+- target: "bidirs[20].bidir_pad/ENABLE_H"
+- target: "bidirs[21].bidir_pad/ENABLE_H"
+- target: "bidirs[22].bidir_pad/ENABLE_H"
+- target: "bidirs[23].bidir_pad/ENABLE_H"
+- target: "bidirs[24].bidir_pad/ENABLE_H"
+- target: "bidirs[25].bidir_pad/ENABLE_H"
+- target: "bidirs[26].bidir_pad/ENABLE_H"
+- target: "bidirs[27].bidir_pad/ENABLE_H"
+- target: "bidirs[28].bidir_pad/ENABLE_H"
+- target: "bidirs[29].bidir_pad/ENABLE_H"
+- target: "bidirs[30].bidir_pad/ENABLE_H"
+- target: "bidirs[31].bidir_pad/ENABLE_H"
+- target: "bidirs[32].bidir_pad/ENABLE_H"
+- target: "bidirs[33].bidir_pad/ENABLE_H"
+- target: "bidirs[34].bidir_pad/ENABLE_H"
+- target: "bidirs[35].bidir_pad/ENABLE_H"

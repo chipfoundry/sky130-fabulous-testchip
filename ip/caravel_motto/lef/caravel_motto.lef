@@ -1,0 +1,26 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO caravel_motto
+  CLASS BLOCK ;
+  FOREIGN caravel_motto ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 112.850 BY 22.020 ;
+  OBS
+      LAYER li1 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+      LAYER met1 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+      LAYER met2 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+      LAYER met3 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+      LAYER met4 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+      LAYER met5 ;
+        RECT 0.0 0.0 112.850 22.020 ;
+  END
+END caravel_motto
+END LIBRARY
+

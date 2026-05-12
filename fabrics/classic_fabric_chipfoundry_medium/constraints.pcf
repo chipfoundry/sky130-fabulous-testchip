@@ -1,147 +1,68 @@
-# PCF for classic_fabric_chipfoundry_medium
-# Source: classic_fabric_chipfoundry_medium.csv (10x8 grid: X0-X9, Y0-Y7)
-#
-# Rationale for remapping from the original large-fabric template:
-#   The medium fabric is a 10-column x 8-row grid. Valid IOBUF tiles are:
-#     - Left  (W_IO2): X0Y1 through X0Y6, each with /A and /B ports = 12 pins
-#     - Right (E_IO2): X9Y1 through X9Y6, each with /A and /B ports = 12 pins
-#     - Total: 24 available IO pins
-#   The original template referenced N-term row (Y=9, which does NOT exist in
-#   this fabric) and S-term row (Y=0, which is a termination tile with no IOBUF).
-#   Those were invalid and caused nextpnr to abort with "no bel named X*Y9/A".
-#   All pins below are mapped exclusively to the 24 valid W_IO2/E_IO2 bel slots.
+# All I/Os
 
-# All I/Os (24 total: 12 left + 12 right)
-set_io all[0]  X0Y1/A
-set_io all[1]  X0Y2/A
-set_io all[2]  X0Y3/A
-set_io all[3]  X0Y4/A
-set_io all[4]  X0Y5/A
-set_io all[5]  X0Y6/A
-set_io all[6]  X0Y1/B
-set_io all[7]  X0Y2/B
-set_io all[8]  X0Y3/B
-set_io all[9]  X0Y4/B
-set_io all[10] X0Y5/B
+set_io all[0] X0Y1/A
+set_io all[1] X0Y1/B
+set_io all[2] X0Y2/A
+set_io all[3] X0Y2/B
+set_io all[4] X0Y3/A
+set_io all[5] X0Y3/B
+set_io all[6] X0Y4/A
+set_io all[7] X0Y4/B
+set_io all[8] X0Y5/A
+set_io all[9] X0Y5/B
+set_io all[10] X0Y6/A
 set_io all[11] X0Y6/B
+
 set_io all[12] X9Y1/A
-set_io all[13] X9Y2/A
-set_io all[14] X9Y3/A
-set_io all[15] X9Y4/A
-set_io all[16] X9Y5/A
-set_io all[17] X9Y6/A
-set_io all[18] X9Y1/B
-set_io all[19] X9Y2/B
-set_io all[20] X9Y3/B
-set_io all[21] X9Y4/B
-set_io all[22] X9Y5/B
+set_io all[13] X9Y1/B
+set_io all[14] X9Y2/A
+set_io all[15] X9Y2/B
+set_io all[16] X9Y3/A
+set_io all[17] X9Y3/B
+set_io all[18] X9Y4/A
+set_io all[19] X9Y4/B
+set_io all[20] X9Y5/A
+set_io all[21] X9Y5/B
+set_io all[22] X9Y6/A
 set_io all[23] X9Y6/B
 
 # For general tests (counter, addition, multiplication, passthrough, etc.)
 # Inputs on left side (X0), outputs on right side (X9)
 set_io clk1 X0Y1/A
-set_io clk2 X0Y2/A
-set_io ena  X0Y3/A
-set_io rst  X0Y4/A
+set_io clk2 X0Y1/B
+set_io ena  X0Y2/A
+set_io rst  X0Y2/B
 
-set_io e[0] X0Y5/A
-set_io e[1] X0Y6/A
-set_io e[2] X0Y1/B
-set_io e[3] X0Y2/B
-
-# a[0:5] - 6-bit input port (e.g. addition, multiplication)
-# Placed on left-side B-ports (X0Y1/B - X0Y6/B); no conflict with c[] on right side.
-set_io a[0] X0Y1/B
-set_io a[1] X0Y2/B
-set_io a[2] X0Y3/B
+set_io a[0] X0Y3/A
+set_io a[1] X0Y3/B
+set_io a[2] X0Y4/A
 set_io a[3] X0Y4/B
-set_io a[4] X0Y5/B
-set_io a[5] X0Y6/B
 
-# b[0:5] - 6-bit input port
-# Placed on left-side A-ports (X0Y1/A - X0Y6/A); kept entirely on left so it
-# never overlaps with c[] which occupies the right side (X9).
-set_io b[0] X0Y1/A
-set_io b[1] X0Y2/A
-set_io b[2] X0Y3/A
-set_io b[3] X0Y4/A
-set_io b[4] X0Y5/A
-set_io b[5] X0Y6/A
+set_io a[4] X0Y5/A
+set_io b[0] X0Y5/B
+set_io b[1] X0Y6/A
+set_io b[2] X0Y6/B
 
-# c[0:7] - 8-bit output port (counter, addition)
-# All 8 pins on the right side (X9). Rows Y1-Y6 A-ports give 6 pins;
-# rows Y1/Y2 B-ports supply the remaining 2.
-set_io c[0] X9Y1/A
-set_io c[1] X9Y2/A
+set_io b[3] X9Y1/A
+set_io b[4] X9Y1/B
+set_io c[0] X9Y2/A
+set_io c[1] X9Y2/B
 set_io c[2] X9Y3/A
-set_io c[3] X9Y4/A
-set_io c[4] X9Y5/A
-set_io c[5] X9Y6/A
-set_io c[6] X9Y1/B
-set_io c[7] X9Y2/B
+set_io c[3] X9Y3/B
+set_io c[4] X9Y4/A
+set_io c[5] X9Y4/B
+set_io c[6] X9Y5/A
+set_io c[7] X9Y5/B
 
-# For the register_file and ram_32x4_2r_1w test
-#
-# Medium fabric IO columns: X0 (W_IO2, Y1-Y6) and X9 (E_IO2, Y1-Y6)
-# Total available: 24 IO bels. The full RAM design needs 26 IOBUFs + 2 GBUFs.
-# The assignments below are collision-free within valid IO columns; nextpnr will
-# report a resource exhaustion error if the design truly needs more bels than exist.
-#
-# clk1/clk2 will use GBUF so they do not consume IOBUF bels here.
-#
-# addr_a[0:4] - 5-bit read address A → left B-ports Y1-Y5
-# (same bels as a[] but a[] is only used in addition/counter, not RAM builds)
-set_io addr_a[0] X0Y1/B
-set_io addr_a[1] X0Y2/B
-set_io addr_a[2] X0Y3/B
-set_io addr_a[3] X0Y4/B
-set_io addr_a[4] X0Y5/B
+# For the macc_8x8_20 test
 
-# addr_b[0:4] - 5-bit read address B → right A-ports Y3-Y6, then right B Y3
-set_io addr_b[0] X9Y3/A
-set_io addr_b[1] X9Y4/A
-set_io addr_b[2] X9Y5/A
-set_io addr_b[3] X9Y6/A
-set_io addr_b[4] X9Y3/B
-
-# addr_c[0:4] - 5-bit write address → right B Y4-Y6 + left B Y6 + left A Y1
-set_io addr_c[0] X9Y4/B
-set_io addr_c[1] X9Y5/B
-set_io addr_c[2] X9Y6/B
-set_io addr_c[3] X0Y6/B
-set_io addr_c[4] X0Y1/A
-
-# word_a[0:3] - 4-bit write data → left A-ports Y2-Y5
-set_io word_a[0] X0Y2/A
-set_io word_a[1] X0Y3/A
-set_io word_a[2] X0Y4/A
-set_io word_a[3] X0Y5/A
-
-# word_b[0:3] - 4-bit read data A → right A Y1-Y2, right B Y1-Y2
-set_io word_b[0] X9Y1/A
-set_io word_b[1] X9Y2/A
-set_io word_b[2] X9Y1/B
-set_io word_b[3] X9Y2/B
-
-# word_c[0:3] - 4-bit read data B → left A Y6, left A Y1 (already used), right B (clash risk)
-# NOTE: at 24 bels, the full RAM does not fit the medium fabric. These are best-effort.
-set_io word_c[0] X0Y6/A
-set_io word_c[1] X9Y3/B  
-set_io word_c[2] X9Y4/B  
-set_io word_c[3] X9Y5/B  
-
-# For the macc_8x8_20 test (12-bit product output)
-# When building macc_8x8_20, addr_* are unused; right side Y1-Y6 A+B gives 12 bels.
-set_io product[0]  X9Y1/A
-set_io product[1]  X9Y2/A
-set_io product[2]  X9Y3/A
-set_io product[3]  X9Y4/A
-set_io product[4]  X9Y5/A
-set_io product[5]  X9Y6/A
-set_io product[6]  X9Y1/B
-set_io product[7]  X9Y2/B
-set_io product[8]  X0Y5/A
-set_io product[9]  X0Y6/A
-set_io product[10] X0Y1/B
-set_io product[11] X0Y2/B
-
+set_io product[0] X9Y2/A
+set_io product[1] X9Y2/B
+set_io product[2] X9Y3/A
+set_io product[3] X9Y3/B
+set_io product[4] X9Y4/A
+set_io product[5] X9Y4/B
+set_io product[6] X9Y5/A
+set_io product[7] X9Y5/B
+set_io product[8] X9Y6/A
+set_io product[9] X9Y6/B

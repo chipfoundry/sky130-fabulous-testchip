@@ -1,11 +1,13 @@
 PDK ?= sky130A
-#PDK ?= ihp-sg13g2
+PDK_ROOT ?= ~/.ciel
+PDK_COMMIT ?= 1e931c9417df0478df9ee6b7289202f3e87440ab
 
 # Get the fabric names
 FABRICS :=  $(patsubst fabrics/%,%,$(wildcard fabrics/*)) 
 
 FABRICS_OPENROAD := $(addsuffix -openroad,$(FABRICS))
 FABRICS_KLAYOUT := $(addsuffix -klayout,$(FABRICS))
+FABRICS_COPY := $(addsuffix -copy,$(FABRICS))
 
 all: $(FABRICS)
 .PHONY: all
@@ -22,12 +24,23 @@ $(FABRICS_KLAYOUT):
 	librelane --pdk ${PDK} fabrics/$(subst -klayout,,$@)/config.yaml --last-run --flow OpenInKLayout
 .PHONY: $(FABRICS_KLAYOUT)
 
+$(FABRICS_COPY):
+	# Copy fabric database
+	mkdir -p user_designs/fabrics/$(subst -copy,,$@)/macro/${PDK}/
+	cp -R fabrics/$(subst -copy,,$@)/macro/${PDK}/fabulous/ user_designs/fabrics/$(subst -copy,,$@)/macro/${PDK}/
+	cp fabrics/$(subst -copy,,$@)/constraints.pcf user_designs/fabrics/$(subst -copy,,$@)/constraints.pcf
+.PHONY: $(FABRICS_COPY)
+
+enable-pdk:
+	ciel enable $(PDK_COMMIT) --pdk-family $(PDK)
+.PHONY: enable-pdk
+
 librelane:
-	librelane --pdk-root ${PDK_ROOT} --pdk ${PDK} --manual-pdk librelane/config.yaml
+	librelane --pdk-root ${PDK_ROOT} --pdk ${PDK} --manual-pdk librelane/config.yaml --save-views-to final/
 .PHONY: librelane
 
 librelane-noklayoutdrc:
-	librelane --pdk-root ${PDK_ROOT} --pdk ${PDK} --manual-pdk librelane/config.yaml --skip KLayout.DRC
+	librelane --pdk-root ${PDK_ROOT} --pdk ${PDK} --manual-pdk librelane/config.yaml --skip KLayout.DRC --save-views-to final/
 .PHONY: librelane-noklayoutdrc
 
 librelane-openroad:

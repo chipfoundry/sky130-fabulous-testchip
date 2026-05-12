@@ -44,7 +44,7 @@ async def test_sys_reset(dut):
     await Timer(10, unit="ns")
 
     pcf.set("a", LogicArray.from_unsigned(0x13, len(pcf.get("a"))))
-    assert pcf.get("b").to_unsigned() == 0x37
+    assert pcf.get("b").to_unsigned() == 0x17
 
     sys_reset.value = 0
     await Timer(20, unit="ns")

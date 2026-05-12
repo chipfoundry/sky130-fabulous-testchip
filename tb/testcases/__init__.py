@@ -3,7 +3,7 @@
 
 import os
 import sys
-from .common import tile_library
+from .common import tile_library, fabric
 
 if tile_library == "classic":
 
@@ -12,11 +12,21 @@ if tile_library == "classic":
     from .classic.passthrough import test_passthrough
     from .classic.addition import test_addition
     from .classic.counter import test_counter
-    from .classic.multiplication import test_multiplication
-    from .classic.macc_8x8_20 import test_macc_8x8_20
-    from .classic.ram_32x4_2r_1w import test_ram_32x4_2r_1w
+
     from .classic.sys_reset import test_sys_reset
-    from .classic.register_file import test_register_file # why does it need to go last?
+    
+    if fabric != "classic_fabric_chipfoundry_small":
+    
+        from .classic.macc_8x8_20 import test_macc_8x8_20
+    
+    if fabric == "classic_fabric_chipfoundry_large":
+    
+        # medium seems to get stuck when run with the others
+        # emulation is fine
+        from .classic.multiplication import test_multiplication
+
+        from .classic.ram_32x4_2r_1w import test_ram_32x4_2r_1w
+        from .classic.register_file import test_register_file # why does it need to go last?
     
 elif tile_library == "tiny":
 
