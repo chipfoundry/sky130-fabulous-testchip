@@ -56,8 +56,8 @@ if __name__ == "__main__":
     # Add models pack
     sources.append(tiles_path / "models_pack.v")
 
-    # Add custom cells
-    sources.append(tiles_path / "custom.v")
+    # Add custom cells (now handled by sim_primitives_patch.v)
+    # sources.append(tiles_path / "custom.v")
     
     # Add simulation patches
     sources.append(proj_path / ".." / "src" / "sim_primitives_patch.v")
