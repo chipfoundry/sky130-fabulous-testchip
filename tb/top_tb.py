@@ -592,9 +592,13 @@ if __name__ == "__main__":
     # RTL
     if not gl:
         if emulation:
-            sources.append(proj_path / f'../user_designs/designs/{tile_library}/{emulation}/{emulation}.vh')
-            defines["EMULATION"] = True
-            test_filter = "test_" + emulation
+            vh_path = proj_path / f'../user_designs/designs/{tile_library}/{emulation}/{emulation}.vh'
+            if vh_path.exists():
+                sources.append(vh_path)
+                defines["EMULATION"] = True
+                test_filter = "test_" + emulation
+            else:
+                raise FileNotFoundError(f"Emulation header not found: {vh_path}. Did you run 'make bitstream' for the design?")
     
         primitives_files = list(primitives_path.glob('**/fabulous/*.v'))
         tile_files = list(tile_library_path.glob(f'**/macro/{pdk}/fabulous/*.v'))
