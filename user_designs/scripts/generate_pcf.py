@@ -52,8 +52,9 @@ def parse_fabric_csv(csv_path):
         for c_idx, tile_type in enumerate(row):
             if 'IO' in tile_type:
                 x_coord = c_idx
-                # Each IO tile has A and B ports
-                for pin in ['A', 'B']:
+                # IO2 tiles have 2 pins (A, B), standard IO tiles have 1 pin (A)
+                pins = ['A', 'B'] if 'IO2' in tile_type else ['A']
+                for pin in pins:
                     io_list.append((str(x_coord), str(y_coord), pin))
 
     # Sort IOs to have a deterministic mapping (X then Y then Port)
