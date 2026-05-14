@@ -3,16 +3,21 @@ PDK 			?= sky130A
 FABRIC 			?= classic_fabric_chipfoundry_large
 TILE_LIBRARY		?= classic
 FABULOUS_ROOT 		?= $(abspath ../../../fabrics/$(FABRIC)/macro/$(PDK)/fabulous)
-PCF_CONSTRAINTS 		?= $(abspath $(FABULOUS_ROOT)/../../../constraints.pcf)
+#PCF_CONSTRAINTS 		?= $(abspath $(FABULOUS_ROOT)/../../../constraints.pcf)
+PCF_CONSTRAINTS 		 = $(abspath ./generated_constraints.pcf)
+FABRIC_CSV              ?= $(abspath ../../../../fabrics/$(FABRIC)/$(FABRIC).csv)
+PCF_GEN_SCRIPT          ?= $(abspath ../../../scripts/generate_pcf.py)
 TOP 			?= top_wrapper
 FABRIC_UPPER             = $(shell echo $(FABRIC) | tr  '[:lower:]' '[:upper:]')
 
 # Available flip-flops and init value
-FFS                     ?= -ff "\$$_DFF_P_" x \
-			   -ff "\$$_DFFE_PP_" x \
-			   -ff "\$$_SDFF_PP?_" x \
-			   -ff "\$$_SDFFE_PP?P_" x \
-			   -ff "\$$_DLATCH_?_" x
+# NOTE: -ff option syntax appears problematic in current yosys version.
+# Leaving empty - synth_fabulous works without explicit FF specification.
+FFS                     ?= -ff \$$_DFF_P_ x \
+			   -ff \$$_DFFE_PP_ x \
+			   -ff \$$_SDFF_PP?_ x \
+			   -ff \$$_SDFFE_PP?P_ x \
+			   -ff \$$_DLATCH_?_ x
 
 $(info $(PDK))
 $(info $(FABRIC))
@@ -35,10 +40,11 @@ EXTRA_PLIBS_PATH 	 = -extra-plib ../../../../ip/fabulous-tiles/primitives/FABULO
 ifeq ($(TILE_LIBRARY),classic)
 ifneq ($(FABRIC),classic_fabric_chipfoundry_small)
 EXTRA_PLIBS_PATH 	+= -extra-plib ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/primitives/RAM_32x4_2R_1W.v \
-   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/primitives/MACC_8x8_20.v
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/MACC_8x8_20/yosys/primitives/MACC_8x8_20.v \
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x32_1RW/yosys/primitives/IHP_SRAM_1024x32_1RW.v \
+   			   -extra-plib ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x16_2RW/yosys/primitives/IHP_SRAM_1024x16_2RW.v
 endif
 endif
-
 
 EXTRA_MAPS_PATH		 = -extra-map ../../../../ip/fabulous-tiles/primitives/FABULOUS_LC/yosys/techmap/lut_map.v \
 			   -extra-map ../../../../ip/fabulous-tiles/primitives/FABULOUS_LC/yosys/techmap/ff_map.v \
@@ -46,7 +52,9 @@ EXTRA_MAPS_PATH		 = -extra-map ../../../../ip/fabulous-tiles/primitives/FABULOUS
 
 ifeq ($(TILE_LIBRARY),classic)
 ifneq ($(FABRIC),classic_fabric_chipfoundry_small)
-EXTRA_MAPS_PATH		+= -extra-map ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/techmap/RAM_32x4_2R_1W_map.v
+EXTRA_MAPS_PATH		+= -extra-map ../../../../ip/fabulous-tiles/primitives/RAM_32x4_2R_1W/yosys/techmap/RAM_32x4_2R_1W_map.v \
+			   -extra-map ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x32_1RW/yosys/techmap/IHP_SRAM_1024x32_1RW_map.v \
+			   -extra-map ../../../../ip/fabulous-tiles/primitives/IHP_SRAM_1024x16_2RW/yosys/techmap/IHP_SRAM_1024x16_2RW_map.v
 endif
 endif
 
@@ -61,7 +69,19 @@ CLKBUF_MAP_PATH		 = -clkbuf-map ../../../../ip/fabulous-tiles/primitives/GBUF/yo
 BIT_GEN 			?= ../../../scripts/bit_gen.py
 BIT_TO_HEX 		?= ../../../scripts/bit_to_hex.py
 
-all: synth pnr bitstream hex
+all: synth generate-pcf pnr bitstream hex
+
+generate-pcf: $(PCF_CONSTRAINTS)
+
+$(PCF_CONSTRAINTS): $(FABRIC_CSV) $(TOP).json
+	@python3 $(PCF_GEN_SCRIPT) $(FABRIC_CSV) $(TOP).json $(PCF_CONSTRAINTS)
+	@echo "Generated $(PCF_CONSTRAINTS)"
+
+FFS                     ?= -ff "\$$_DFF_P_" x \
+			   -ff "\$$_DFFE_PP_" x \
+			   -ff "\$$_SDFF_PP?_" x \
+			   -ff "\$$_SDFFE_PP?P_" x \
+			   -ff "\$$_DLATCH_?_" x
 
 synth:
 	yosys \
@@ -72,8 +92,8 @@ synth:
 	-carry ha \
 	-complex-dff \
 	$(FFS) \
-	$(MULTIPLIER_MAP_PATH) \
 	$(EXTRA_PLIBS_PATH) \
+	$(MULTIPLIER_MAP_PATH) \
 	$(EXTRA_MAPS_PATH) \
 	$(EXTRA_MLIBMAPS_PATH) \
 	$(CLKBUF_MAP_PATH) ; \
@@ -83,17 +103,17 @@ synth:
 	--define $(FABRIC_UPPER) $(RTL)
 .PHONY: synth
 
-pnr:
+pnr: $(PCF_CONSTRAINTS) $(TOP).json
 	FAB_ROOT=$(FABULOUS_ROOT) \
 	nextpnr-generic \
 	--uarch fabulous \
 	--json $(TOP).json \
 	--write $(TOP)_out.json \
 	-o fasm=$(TOP).fasm \
+	-o pcf=$(PCF_CONSTRAINTS) \
 	--verbose \
 	--log $(TOP)_log.txt \
-	--timing-allow-fail \
-	-o pcf=$(PCF_CONSTRAINTS)
+	--timing-allow-fail
 .PHONY: pnr
 
 bitstream:

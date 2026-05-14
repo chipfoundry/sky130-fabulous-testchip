@@ -26,8 +26,8 @@ set_io all[21] X5Y5/B
 set_io all[22] X5Y6/A
 set_io all[23] X5Y6/B
 
-# For general tests
-
+# For general tests (counter, addition, multiplication, passthrough, etc.)
+# Inputs on left side (X0), outputs on right side (X5)
 set_io clk1 X0Y1/A
 set_io clk2 X0Y1/B
 set_io ena  X0Y2/A

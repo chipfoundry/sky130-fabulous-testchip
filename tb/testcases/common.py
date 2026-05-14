@@ -17,6 +17,17 @@ DESYNC_FLAG = 20
 
 fabric = os.getenv("FABRIC", "classic_fabric_chipfoundry_large")
 tile_library = os.getenv("TILE_LIBRARY", "classic")
+testname = os.getenv("EMULATION", "")
+
+def get_pcf_path(proj_path, fabric, tile_library, testname):
+    """
+    Find the correct PCF file for simulation.
+    Prioritizes the generated PCF from the design folder.
+    """
+    gen_pcf = proj_path / f"../../../user_designs/designs/{tile_library}/{testname}/generated_constraints.pcf"
+    if gen_pcf.exists():
+        return gen_pcf
+    return proj_path / f"../../../fabrics/{fabric}/constraints.pcf"
 
 async def zero_bitstream(dut, delay=10):
     """

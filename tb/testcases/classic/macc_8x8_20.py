@@ -9,7 +9,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
 from cocotb.types import LogicArray, Logic
 
-from ..common import zero_bitstream, upload_bitstream, PCF, fabric, tile_library
+from ..common import zero_bitstream, upload_bitstream, PCF, fabric, tile_library, get_pcf_path
 
 testname = Path(__file__).stem
 proj_path = Path(__file__).resolve().parent
@@ -18,7 +18,7 @@ proj_path = Path(__file__).resolve().parent
 async def test_macc_8x8_20(dut):
     """Load bitstream for macc_8x8_20"""
 
-    pcf = PCF(dut, proj_path / f"../../../fabrics/{fabric}/constraints.pcf")
+    pcf = PCF(dut, get_pcf_path(proj_path, fabric, tile_library, testname))
     pcf.write_gtkw(f"{testname}.gtkw", ["clk1", "rst", "ena", "a", "b", "product"])
 
     # Reset

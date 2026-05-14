@@ -1,6 +1,6 @@
 # sky130 FABulous Test Chip
 
-A test chip with three FABulous FPGA fabrics.
+A test chip with three FABulous FPGA fabrics (Small, Medium, and Large).
 
 <p align="center">
   <a href="img/chip_top.png">
@@ -8,163 +8,286 @@ A test chip with three FABulous FPGA fabrics.
   </a>
 </p>
 
-The following FPGA fabrics are available:
-
-- classic_fabric_chipfoundry_small
-  - 192x FABULOUS_LC
-- classic_fabric_chipfoundry_medium
-  - 288x FABULOUS_LC
-  - 6x RAM_32x4_2R_1W
-  - 3x MACC_8x8_20
-- classic_fabric_chipfoundry_large
-  - 1056x FABULOUS_LC
-  - 12x RAM_32x4_2R_1W
-  - 6x MACC_8x8_20
-
-The chip will be packaged using ChipFoundry's QFN service:
-
-<p align="center">
-  <a href="img/bonding_diagram.png">
-    <img src="img/bonding_diagram.png" alt="bonding diagram" width=55%>
-  </a>
-</p>
-
-| Pin   | Name           | Description                                   |
-|-------|----------------|-----------------------------------------------|
-| 1     | config_busy    | High during fabric configuration operation.   |
-| 2     | fpga_select[0] | fpga_select[1:0] is used to select the active fabric. |
-| 3     | fpga_select[1] | 2'd0 = Large, 2'd1 = Small, 2'd2 = Medium, 2'd3 = None |
-| 4     | reset          | Active low reset.                             |
-| 5     | clock          | Clock signal. Configuration up to 10MHz.      |
-| 6     | spi_miso       | SPI MISO                                      |
-| 7     | spi_mosi       | SPI MOSI                                      |
-| 8     | spi_cs_n       | SPI CS_N                                      |
-| 9     | spi_sclk       | SPI SCLK                                      |
-| 10    | spi_mode       | Pull down = active SPI, Pull up = passive SPI |
-| 11-16 | fpga_io[5:0]   | FPGA I/O                                      |
-| 22-28 | fpga_io[12:6]  | FPGA I/O                                      |
-| 33-48 | fpga_io[28:13] | FPGA I/O                                      |
-| 53-59 | fpga_io[35:29] | FPGA I/O                                      |
-| 64    | enable         | Enable signal for the I/Os. Must use I/O domain and should be kept low during startup. |
-| 18, 31, 49, 63 | vccd           | Core Power (1.8V)                    |
-| 17, 32, 50, 62 | vssd           | Core Ground                          |
-| 20, 29, 52, 61 | vddio          | I/O Power (3.3V - 5.0V)              |
-| 21, 30, 51, 60 | vssio          | I/O Ground                           |
-
-This fabrics in this repository use the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
-
-The fabrics can be implemented with LibreLane using the FABulous plugin for LibreLane: [librelane_plugin_fabulous](https://github.com/mole99/librelane_plugin_fabulous).
-See below for more information about stitching the fabric. 
-
-A Continuous Integration (CI) setup implements the fabrics for the sky130A PDK.
-
-## Requirements
-
 > [!NOTE]
-> Make sure to clone the repository with submodules!
->
->```console
->git clone --recurse-submodules <url>.git
->```
-> or initialize the submodules after cloning:
->
->```console
-> git submodule update --init --recursive
->```
+> To build the chip, enable the following PDK version using ciel: `d815bb30c9afdf9e264c276a8a2b533108dea3d0`
+> In addition, the following LibreLane branch must be used: `nix shell github:librelane/librelane/leo/padring-orientation`
+> This repository contains a collection of fabrics using the [fabulous-tiles](https://github.com/mole99/fabulous-tiles) tile libraries.
 
-For information on installing Nix with the FOSSi Foundation cache, please refer to the LibreLane documentation: https://librelane.readthedocs.io/en/stable/installation/nix_installation/index.html
-
-## Stitch the Fabrics
-
-As a prerequisite make sure that the tiles for the tile library that you are using have been implemented in `ip/fabulous-tiles`.
-If that is the case, you can proceed by enabling a Nix shell with LibreLane in this repository:
-
+To clone the repository with submodules:
+```bash
+git clone --recurse-submodules https://github.com/ShekharShwetank/sky130-fabulous-testchip.git
 ```
+
+---
+
+## 1. Abstract / Executive Summary
+The `sky130-fabulous-testchip` project is a high-density, multi-fabric FPGA research vehicle implemented in the SkyWater 130nm (Sky130) process node. It leverages the **FABulous** (Framework for Architecture and Blueprint of Universal Logic) ecosystem to demonstrate the feasibility of embedded FPGA (eFPGA) IP in open-source ASIC flows. The project provides a complete lifecycle—from individual logic tile hardening to full chip-level stitching and automated user-design validation.
+
+## 2. Architecture Overview
+The system architecture follows a hierarchical modular approach designed for scalability and physical verification integrity.
+
+| Layer | Component | Description |
+| :--- | :--- | :--- |
+| **L1: Tile IP** | `ip/fabulous-tiles` | Primitive logic blocks (LUT4, Switch Matrices, IO Blocks). Hardened as GDSII macros using OpenLane. |
+| **L2: Fabric** | `fabrics/` | Systematic arrangements of L1 tiles into grids (Small: 24 IO, Medium: 24 IO, Large: 48 IO). |
+| **L3: Wrapper** | `src/` | ASIC top-level logic (`chip_top.sv`) providing clock gating, power management, and IO pad mapping. |
+| **L4: Toolchain** | `user_designs/` | Synthesis, Place & Route (PnR), and Bitstream generation pipeline for third-party RTL. |
+
+---
+
+## 3. Prerequisites & Dependencies
+System requirements are categorized by their role in the implementation lifecycle.
+
+### 3.1. System Level (Host OS)
+*   **Operating System**: Linux (Ubuntu 22.04+ recommended).
+*   **Environment Manager**: [Nix Package Manager](https://nixos.org/download.html) (Mandatory for toolchain hermeticity).
+
+### 3.2. Application Level (EDA Tools)
+*   **Synthesis**: Yosys 0.62+
+*   **PnR**: NextPNR-Generic (with FABulous 2.0 uarch support).
+*   **Simulation**: Icarus Verilog & Cocotb.
+*   **ASIC Flow**: LibreLane & OpenROAD.
+
+---
+
+## 4. Environment Provisioning
+Nix is utilized to provision a deterministic development environment, ensuring that all contributors use identical tool versions.
+
+### 4.1. Entering the Development Environment
+**Directory**: Root (`/`)
+**Environment**: Nix Shell (Flakes recommended)
+
+#### Option A: Modern Nix (Recommended)
+> `nix develop` is the most robust method and ensures 100% reproducibility by ignoring host system channels.
+```bash
+# Initialize the hermetic shell using Flakes
+nix develop
+```
+
+#### Option B: Legacy nix-shell (Fallback)
+> Use this if you haven't enabled experimental Flakes support in your Nix installation.
+```bash
+# Resolve channel dependencies
+export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz
+
+# Initialize the shell
 nix-shell
 ```
 
-To implement all fabrics, run:
+> [!TIP]
+> The `nix develop` command ensures that all Python dependencies (`cocotb`, `pyyaml`, `fasm`) and EDA binaries are available in the `$PATH` exactly as specified in the `flake.lock`.
 
-```
-make all
+---
+
+## 5. Installation & Build Procedure
+
+### 5.1. Stage 1: IP Tile Hardening
+Tiles must be physically implemented before fabric assembly.
+
+**Directory**: `ip/fabulous-tiles`
+**Environment**: nix develop / nix-shell
+
+#### Build Options & Examples:
+| Goal | Command | Technical Justification |
+| :--- | :--- | :--- |
+| **Harden All Tiles** | `make all` | Executes the full batch implementation of the selected library. |
+| **Specific Tile** | `python3 tiles.py LUT4x8_ha` | Accelerates development by hardening only one primitive (e.g., LUT). |
+| **Open in GUI** | `make LUT4x8_ha-openroad` | Launches OpenROAD GUI for physical layout inspection. |
+| **View GDS** | `make LUT4x8_ha-klayout` | Opens the final GDSII view in KLayout for DRC/LVS check. |
+
+#### Configuration Variables:
+*   `PDK`: `sky130A` (default) or `ihp-sg13g2`.
+*   `TILE_LIBRARY`: `classic` (default) - The logic architecture to implement.
+
+```bash
+# Transition to IP directory
+cd ip/fabulous-tiles
+
+# Generate all tiles for the Sky130A PDK using the 'classic' library
+PDK=sky130A TILE_LIBRARY=classic make all
 ```
 
-To implement a single fabric, run:
+---
 
-```
+### 5.2. Stage 2: Fabric Stitching
+Aggregating hardened tiles into a routable FPGA grid.
+
+**Directory**: Root (`/`)
+**Environment**: nix develop / nix-shell
+
+#### Fabric Targets:
+| Target | Complexity | Build Command |
+| :--- | :--- | :--- |
+| **Small** | 24 I/O Pins | `make classic_fabric_chipfoundry_small` |
+| **Medium**| 24 I/O Pins | `make classic_fabric_chipfoundry_medium` |
+| **Large** | 48 I/O Pins | `make classic_fabric_chipfoundry_large` |
+
+#### Visualization:
+To inspect the stitched fabric in the ASIC flow:
+```bash
+# Return to root
+cd ../../
+# Implement the large fabric macro
 make classic_fabric_chipfoundry_large
+# Open Large Fabric in OpenROAD
+make classic_fabric_chipfoundry_large-openroad
+# Open Medium Fabric in KLayout
+make classic_fabric_chipfoundry_medium-klayout
 ```
 
-After a fabrics has been implemented you can view it either in OpenROAD or KLayout by appending `-openroad` or `-klayout` to the fabric name.
-For example, to view `classic_fabric_chipfoundry_large` in OpenROAD, run: `make classic_fabric_chipfoundry_large-openroad`.
+---
 
-After implementing the fabrics, copy the files over:
+### 5.3. Stage 3: User Design Compilation
+Compiling Verilog RTL into a bitstream compatible with the target fabric.
 
-```
-make classic_fabric_chipfoundry_large-copy
-```
+**Directory**: `user_designs/`
+**Environment**: nix develop / nix-shell
 
+#### Manual Compilation Example:
+```bash
+# Navigate to design directory
+cd user_designs/designs/classic/counter
 
-## Implement User Designs
-
-Please see the README in `user_designs/` on how to implement a user design for the fabrics.
-
-## Simulate the Fabric
-
-After you have generated the bitstreams for the user designs you can simulate the fabric.
-You will again need the Nix shell from the root of this repository.
-
-Again, use `PDK`, `FABRIC` and `TILE_LIBRARY` accordingly.
-
-There are two ways to simulate the fabric:
-
-#### RTL "Emulation"
-
-In this case, "emulation" means that we simulate the fabric, however, without uploading the bitstream.
-The configuration bits of the fabric are already initialized with the user design bitstream.
-This has the benefit that simulation is much faster: no need to upload the bitstream and the Verilog simulator can prune dead branches. However, the disadvantage is that only a single user design can be run per simulation.
-
-To emulate a user design, simply set EMULATE to its name:
-
-```
-export EMULATE=counter
+# Compile for a specific fabric size
+FABRIC=classic_fabric_chipfoundry_small make clean all
 ```
 
-Then, run the simulation using cocotb:
+#### Automated Validation Suite:
+To verify all 12 designs across all 3 fabric sizes (36 unique combinations):
+```bash
+# Navigate to user design directory
+cd user_designs
 
-```
-cd tb; python3 fabric_tb.py
-```
-
-#### RTL Simulation
-
-To start the RTL simulation, simply run cocotb:
-
-```
-cd tb; python3 fabric_tb.py
+# Run the comprehensive validation suite (Tests 12 designs across 3 fabrics)
+./test_all_fabrics.sh
 ```
 
-And it will run all available test cases for the selected fabric and tile library.
+---
 
+## 6. Configuration Matrix
+Build behavior is controlled via environment variables.
 
-### Implement The Chip
+| Variable | Default | Technical Role |
+| :--- | :--- | :--- |
+| `PDK` | `sky130A` | Targets the specific Process Design Kit for physical implementation. |
+| `FABRIC` | `classic_fabric_10x10` | Defines the grid geometry and IO mapping for bitstream generation. |
+| `TILE_LIBRARY` | `classic` | Selects the primitive cell library used during synthesis. |
+| `EMULATION` | `None` | If set to a design name, enables accelerated RTL emulation in simulation. |
 
-> [!NOTE]
-> To build the chip, enable the following PDK version using ciel: 1e931c9417df0478df9ee6b7289202f3e87440ab
-> In addition, the LibreLane dev branch must be used: `nix shell github:librelane/librelane/dev`
+---
 
-To implement the full chip, simply run:
+## 7. Simulation & Verification
+
+**Directory**: `tb/`
+**Environment**: nix develop / nix-shell
+
+### 7.1. RTL Verification Modes
+
+#### Accelerated RTL Emulation:
+Simulates the fabric with the bitstream pre-loaded into memory (bypasses serial configuration for speed).
+```bash
+# Directory: tb/
+cd tb
+export EMULATION=counter
+export FABRIC=classic_fabric_chipfoundry_large
+python3 fabric_tb.py
+```
+
+#### Full Configuration Test:
+Simulates the bitstream being uploaded via the configuration interface bit-by-bit.
+```bash
+unset EMULATION
+python3 fabric_tb.py
+```
+
+### 7.2. Waveform Inspection
+Waveforms are dumped in FST format for analysis in GTKWave.
+```bash
+# Open waveforms for the last simulation run
+gtkwave sim_build/*.fst
+```
+
+### 7.3. Common Failure Modes
+| Symptom | Cause | Remediation |
+| :--- | :--- | :--- |
+| `FileNotFoundError: .vh` | Synthesis failure | Check `build_log.txt` in the design directory for unmapped primitives. |
+| `nextpnr` Timeout | Routing Congestion | Reduce logic density or increase I/O availability via a larger fabric. |
+| `KeyError: clk` | PCF Mismatch | Ensure `generated_constraints.pcf` matches the discovered ports in the synthesis JSON. |
+| `Icarus Syntax Error` | Cache Corruption | Execute `rm -rf tb/sim_build` to force a clean compilation. |
+
+---
+
+## 8. Custom Design Implementation
+Procedure to implement, verify, and scale a custom RTL design across the FABulous fabrics.
+
+### 1. Environment & Directory Setup
+Ensure you are in the root directory and the Nix environment is active.
+```bash
+# Directory: /
+nix develop  # or nix-shell
+mkdir -p user_designs/designs/classic/my_custom_design
+```
+
+### 2. Design Integration
+1.  **RTL Source**: Place your Verilog file in the new directory. The top module name must match the filename.
+    ```bash
+    # File: user_designs/designs/classic/my_custom_design/my_custom_design.v
+    # Directory context: user_designs/designs/classic/my_custom_design/
+    ```
+2.  **Local Makefile**: Create a minimal Makefile to inherit the project's build rules.
+    ```makefile
+    # File: user_designs/designs/classic/my_custom_design/Makefile
+    include ../../../makefile.include
+    ```
+
+### Phase 3: Synthesis & Bitstream Generation
+Generate the bitstream for your target fabric (e.g., Large).
+```bash
+# Directory: user_designs/designs/classic/my_custom_adder/
+FABRIC=classic_fabric_chipfoundry_large make clean all
+```
+ 
+The `make all` target triggers a three-stage pipeline:
+- `yosys`: Synthesizes RTL to a JSON netlist using the FABulous techmap.
+- `generate_pcf.py`: Automatically discovers ports and maps them to the nearest available fabric I/O pins.
+- `nextpnr-generic`: Performs the final Place & Route and generates the `.bit` file.
+
+### Phase 4: Functional Verification (cocotb)
+1.  **Create Testbench**: Define your simulation logic in Python.
+    ```python
+    # File: tb/testcases/classic/my_custom_design.py
+    import cocotb
+    from ..common import PCF, get_pcf_path, upload_bitstream, fabric, tile_library
+    
+    @cocotb.test()
+    async def test_my_custom_design(dut):
+        testname = "my_custom_design"
+        pcf = PCF(dut, get_pcf_path(proj_path, fabric, tile_library, testname))
+        # ... your test logic here ...
+    ```
+2.  **Run Fast Emulation**: Verify the logic without waiting for the serial configuration delay.
+    ```bash
+    # Directory: tb/
+    export EMULATION=my_custom_design
+    export FABRIC=classic_fabric_chipfoundry_large
+    python3 fabric_tb.py
+    ```
+
+### 5. Multi-Fabric Validation Sweep
+Ensure your design is portable across all fabric sizes offered by the test chip.
+```bash
+# Directory: user_designs/
+./test_all_fabrics.sh my_custom_design
+
+or to test a specific fabric:
+./test_all_fabrics.sh --design my_custom_design --fabric large
 
 ```
-make librelane
-```
+This script will build and verify your design against Small, Medium, and Large fabrics, generating a compatibility report in `build_results.log`.
 
-To view the results:
+---
 
-```
-make librelane-klayout
-```
-
-```
-make librelane-openroad
-```
+## 9. References
+*   [FABulous Project](https://github.com/FPGA-Research-Manchester/FABulous)
+*   [fabulous-tiles](https://github.com/mole99/fabulous-tiles)
+*   [LibreLane](https://github.com/librelane/librelane)
